@@ -1,0 +1,15 @@
+
+div.home-last-article div.card-body ul {
+  display: block;
+  padding: 0px;
+  list-style: none !important;
+}
+
+div.community-partner div.card-body ul {
+  display: block;
+  padding: 0px;
+  list-style: none !important;
+}
+div.community-partner div.card-body ul li a {
+  margin-left: 10px; 
+}

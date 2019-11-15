@@ -1,0 +1,44 @@
+{
+  "systems": {
+    "sitename": "API - Pascal Indonesia Community",
+    "slogan": "Pascal Indonesia Community",
+    "baseurl": "",
+    "admin_email": "admin@pascal-id.org",
+    "development": true,
+    "debug": true,
+    "module_default": "main",
+    "language_default": "id",
+    "theme_enable": false,
+    "theme": "default",
+    "cache": "none",
+    "temp": "ztemp",
+    "error_url": "\/",
+    "session_timeout": 0,
+    "error_redirect": false
+  },
+  "database": {
+    "default": {
+      "driver": "MySQL 5.6",
+      "hostname": "localhost",
+      "port": "",
+      "username": "your_username",
+      "password": "your_username",
+      "database_name": "database_name",
+      "prefix": "",
+      "library": ""
+    }
+  },
+  "image": {
+    "sourceBaseURL": "https://cdn.carik.id/"
+  },
+  "mailer": {
+    "default": {
+      "hostname": "your.smtp.server",
+      "username": "your_username",
+      "password": "the_password",
+      "smtp_port": "465",
+      "ssl": true,
+      "tls": true
+    }
+  }
+}

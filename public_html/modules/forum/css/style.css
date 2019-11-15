@@ -1,0 +1,179 @@
+
+textarea.is-invalid {
+  border: 1px solid salmon !important;
+}
+
+.timeline::before {
+  left: 13px !important;
+}
+.timeline-item {
+  margin-left: 19px !important;
+  margin-right: 0px !important;
+  border: 0px !important;
+}
+.timeline div i {
+  left: 0px !important;
+}
+
+.timeline-header {
+  padding-left: 20px !important;
+  padding-bottom: 0px !important;
+  border-bottom: 0px !important;
+}
+.timeline-body {
+  white-space: pre-line;
+  xoverflow-x: scroll !important;
+  padding-top: 5px !important;
+}
+.timeline-body code {
+  white-space: pre;
+}
+.timeline-body blockquote {
+  margin: 0px;
+  margin-left: 20px;
+  border-left: 1px solid #007bff !important;
+}
+.timeline-body img {
+  border: 0px;
+  max-width: 95%;
+}
+.timeline-body img:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.user-photo-small {
+  float: left;
+  margin-top: 5px;
+  xmargin-left: 0px;
+}
+.user-photo-small img {
+  float: left;
+  width: 30px !important;
+  height: 30px !important;
+  position:relative;
+  z-index: 9 !important;
+  background: #eeeeee;
+}
+
+.thread .timeline > div {
+  margin-bottom: 5px !important;
+}
+.thread .card-body {
+  padding-top: 0px !important;
+}
+.thread .card-body hr {
+  margin: 0 20px 5px 30px;
+}
+.thread .timeline-body h1 {
+  margin-top: 10px !important;
+  font-size: 1.5rem;
+}
+.thread .timeline-body h2 {
+  margin-top: 10px !important;
+  font-size: 1.3rem;
+}
+.thread .timeline-body h3 {
+  margin-top: 20px !important;
+  padding-bottom: 5px !important;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-bottom: 1px solid silver;
+}
+
+.thread .timeline-body pre {
+  padding: 5px;
+  margin-left: 15px;
+  background: #eeeeee;
+  border: 1px solid #cccccc !important;
+  font:normal normal 12px/14px "Fira Code", "Courier New",Courier,Monospace !important;
+}
+.thread .timeline-body pre:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.thread .timeline-body code {
+  padding-left: 5px !important;
+}
+.thread .timeline-body pre code,
+.thread .timeline-body pre pre {
+  all:unset;
+  margin: 0px;
+  padding: 0px;
+}
+.thread .timeline-body pre code,
+.thread .timeline-body pre .line-number {
+  /* Ukuran line-height antara teks di dalam tag <code> dan <span class="line-number"> harus sama! */
+  font:normal normal 12px/14px "Fira Code", "Courier New",Courier,Monospace;
+  color:black;
+  display:block;
+}
+.thread .timeline-body pre .line-number {
+  float:left;
+  margin:0 0.1em 0 -1em;
+  border-right:1px solid;
+  text-align:right;
+}
+.thread .timeline-body pre .line-number span {
+  display:block;
+  padding:0 .5em 0 1em;
+}
+.thread .timeline-body pre .cl {
+  display:block;
+  clear:both;
+}
+
+
+#thread-reply {
+  white-space: nowrap;
+}
+#thread-reply .timeline-item {
+  margin-left: 35px !important;
+  margin-right: 15px !important;
+  padding: 5px;
+}
+#thread-reply .timeline-item .row {
+  margin-top: 5px;
+}
+#thread-reply .timeline-item textarea {
+  width: 100%;
+}
+#thread-reply .CodeMirror, .CodeMirror-scroll {
+	min-height: 80px !important;
+}
+
+#thread-reply button {
+  xmargin-bottom: 0px !important;
+  xbottom: 0 !important;
+}
+.thread-more {
+  padding-left: 10px;
+  cursor: pointer;
+  color: burlywood;
+}
+.thread-pages {
+  margin-top: 5px !important;
+  margin-left: 40px;
+  font-size: 0.85em;
+}
+.thread-pages ul {
+  display: flex;
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.thread-pages ul li {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.thread-pages ul li.active:hover {
+  background: #efefef;
+}
+.thread-pages .item {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.thread-pages .item:hover {
+  background: #efefef;
+}
+.thread-view {
+  margin-right: 15px;
+}

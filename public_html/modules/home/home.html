@@ -1,0 +1,74 @@
+
+
+<section class="content-header">
+    <div class="container-fluid">
+      [include file=../../../modules/home/includes/banner.html]
+    </div>
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      
+      <section class="col-lg-8 connectedSortable">
+
+        <!-- last article -->
+        <div class="card home-last-article">
+          <div class="card-header">
+            <h3 class="card-title">Last Articles</h3>
+          </div>      
+          <div class="card-body">
+            [text mod=_article_ func=lastarticle limit=12]
+          </div>
+        </div>
+        <!-- /last article -->
+
+        <div class="card community-partner">
+            <div class="card-header">
+              <h3 class="card-title">Other Pascal Family Community Group</h3>
+            </div>      
+            <div class="card-body">
+              <ul>
+                <li>Facebook Group</li>
+                <li><a href="https://www.facebook.com/groups/pascal.id" target="_blank">Pascal Indonesia</a></li>
+                <li><a href="https://www.facebook.com/groups/delphi.indonesia/" target="_blank">Delphi Indonesia</a></li>
+                <li><a href="https://www.facebook.com/groups/162358993929608/" target="_blank">Komunitas Lazarus Free Pascal Indonesia</a></li>
+                <li><a href="https://www.facebook.com/groups/kppdi/" target="_blank">Komunitas Penggemar Pemrograman Delphi Indonesia</a></li>
+                <li><a href="https://www.facebook.com/groups/delphi.interbase/" target="_blank">Komunitas Programmer Delphi dan Interbase Indonesia</a></li>
+                <li>Telegram Group</li>
+                <li><a href="https://t.me/PascalID" target="_blank">Pascal Indonesia</a></li>
+                <li><a href="https://t.me/kppdi" target="_blank">KPPDI</a></li>
+              </ul>
+            </div>
+          </div>          
+      </section>
+
+      <section class="col-lg-4 connectedSortable">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Highlights</h3>
+          </div>
+          <div class="card-body global-list">
+            <ul>
+              <li>Pascal Reborn</li>
+              <li>All About Pascal</li>
+              <li>Search and Read</li>
+              <li>Cari dan Baca</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card topic-last">
+          <div class="card-header">
+            <h3 class="card-title">Recent Forum Posts</h3>
+          </div>
+          <div class="card-body">
+            [text mod=_forum func=lasttopic]
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+  </div>
+  
+</section>

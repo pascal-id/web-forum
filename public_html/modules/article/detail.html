@@ -1,0 +1,73 @@
+<script>
+  moduleName = 'article';
+  referenceId = [$Article.nid];
+  referenceTitle = '[$Article.title]';
+</script>
+<script src="[baseurl]modules/article/js/article.js?_=79"></script>
+<link rel="stylesheet" href="/modules/article/css/style.css?_=79" type="text/css" media="all" />
+<section class="content-header">
+    <div class="container-fluid"></div>
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- article -->
+      <section class="forums col-lg-9 connectedSortable">
+        <div class="card article">
+          <div class="card-header ">
+            <h1 class="card-title">[$Title]</h1>
+            [if $Obsolete eq 0]
+            <div class="ribbon-wrapper ribbon-lg">
+              <div class="ribbon bg-secondary">obsolete</div>
+            </div>
+            [/if]
+            <br />
+            <span class="small">by <a href="[baseurl]profile/[$Article.contributor]">[$Article.contributor]</a> in <a href="[baseurl]article/category/0/[$Article.category_name filter=permalink]">[$Article.category_name]</a> [$Date xfilter=dateformathuman] <span class="hide">[$Article.counter]</span></span>
+          </div>
+          <div class="card-body">[$Article.hometext filter=multifilter]
+            <br />[$Article.bodytext filter=multifilter]            
+          </div>
+          <div class="card-notes small">[$Article.notes]</div>
+          <div class="card-footer">
+            <a id="report-obsolete" href="#" class="small login-required" rel="article" data-toggle="modal" data-target="#obsolete-modal">» Report as Obsolete</a>
+          </div>
+        </div>
+    
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Random Articles</h3>
+          </div>
+          <div class="card-body global-list">
+            [text mod=_article_ func=randomarticle]
+          </div>
+        </div>
+  
+      </section>
+      <!-- /article -->
+
+      <section class="col-lg-3 connectedSortable">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Last Articles</h3>
+          </div>
+          <div class="card-body global-list">
+            [text mod=_article_ func=lastarticle]
+          </div>
+        </div>
+
+        <div class="card topic-last">
+          <div class="card-header">
+            <h3 class="card-title">Recent Topic</h3>
+          </div>
+          <div class="card-body global-list">
+            [text mod=_forum func=lasttopic]
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+  </div>
+  
+</section>
