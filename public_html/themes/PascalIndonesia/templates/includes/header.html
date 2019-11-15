@@ -1,0 +1,142 @@
+<script>
+  var moduleName = '';
+  var referenceId = 0;
+  var referenceTitle = '';
+</script>
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+    </li>
+    <li class="nav-item d-sm-inline-block">
+      <a href="/" class="nav-link home"><b>Pascal Indonesia</b></a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <a href="/forum/" class="nav-link">Forum</a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <a href="/news/" class="nav-link">Article</a>
+    </li>
+  </ul>  
+
+
+  <!-- SEARCH FORM -->
+  <form id="search-header" class="form-inline ml-3 d-none d-sm-inline-block " action="/search/">
+    <div class="input-group input-group-sm">
+      <input name="q" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+      <div class="input-group-append">
+        <button class="btn btn-navbar" type="submit">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+  
+
+
+
+  <!-- Right navbar links -->
+  <ul class="navbar-nav ml-auto">
+
+    <!-- Messages Dropdown Menu -->
+    <li id="message-notification" class="nav-item dropdown hide">
+      <a class="nav-link" data-toggle="dropdown" href="#">
+        <i class="far fa-comments"></i>
+        <span class="badge badge-danger navbar-badge">3</span>
+      </a>
+      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <!-- notification -->
+
+      </div>
+    </li>
+
+    <!-- Notifications Dropdown Menu -->
+    <li id="notification-list" class="nav-item dropdown hidex">
+      <a class="nav-link" data-toggle="dropdown" href="#">
+        <i class="far fa-bell"></i>
+        <span class="badge badge-warning navbar-badge">0</span>
+      </a>
+      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right hide">
+      </div>
+    </li>
+
+    <!-- usermenu -->
+    <li class="nav-item dropdown user-menu">
+      <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+        [if __is_logged_in__ neq 0]
+        <img src="[themefullpath]/images/others/user-login.jpg" class="user-image img-circle elevation-2" alt="User Image">
+        [/if]
+        [if __is_logged_in__ eq 0]
+        <img src="https://img.pascal-id.org/profile-image/[__gravatar__].jpg" class="user-image img-circle elevation-2" alt="[__username__] Profile Image" onerror="this.onerror=null; this.src='/profile-image/default.png';">
+        [/if]
+
+
+        <span class="d-none d-md-inline txt-login-here" ipaddress="[__ipaddress__]">
+          [if __is_logged_in__ neq 0]
+            Login Here
+          [/if]
+          [if __is_logged_in__ eq 0]
+            [__username__]
+          [/if]
+        </span>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <li class="user-header bg-primary">
+            [if __is_logged_in__ eq 0]
+            <img src="https://img.pascal-id.org/profile-image/[__gravatar__].jpg" class="img-circle elevation-2" alt="[__username__] Profile Image" onerror="this.onerror=null; this.src='/profile-image/default.png';">
+            [/if]
+            <p>
+                [if __is_logged_in__ neq 0]
+              <span>Vizitor</span>
+              [/if]
+              [if __is_logged_in__ eq 0]
+              <a href="/profile/[__username__]/" class="username"><span ipaddress="[__ipaddress__]">[__username__]</span></a>
+              <small><a href="/profile/[__username__]/">profile</a></small>
+              [/if]              
+            </p>
+        </li>
+        [if __is_logged_in__ neq 0]
+        <li>
+          <a id="btnFacebookLoginHeader" href="#" class="btn-login btn btn-block btn-primary btn-flat">
+            <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
+          </a>
+        </li>
+        [/if]
+        [if __is_logged_in__ eq 0]
+        <li>
+          <a href="#" class="btn-logout btn btn-block btn-flat">
+            <i class="fas fa-sign-out-alt mr-2"></i> LogOut
+          </a>
+        </li>
+        [/if]
+        <li class="user-body hide">
+          <div class="row">
+            <div class="col-4 text-center">
+              <a href="#">Post</a>
+            </div>
+            <div class="col-4 text-center">
+              <a href="#">Follower</a>
+            </div>
+            <div class="col-4 text-center">
+              <a href="#">Friends</a>
+            </div>
+          </div>
+        </li>
+        <li class="user-footer hide">
+          <a href="/profile" class="btn btn-default btn-flat">Profile</a>
+          <a href="/logout" class="btn btn-default btn-flat float-right">Sign out</a>
+        </li>
+      </ul>
+    </li>
+    <!-- /usermenu -->
+
+    <li id="control-right" class="nav-item hide">
+      <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
+        <i class="fas fa-th-large"></i>
+      </a>
+    </li>
+  </ul>  
+
+</nav>
+

@@ -1,0 +1,80 @@
+<script src="[baseurl]modules/forum/js/forum.js?_=66"></script>
+
+<section class="content-header">
+
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-9">
+        <ul class="breadcrumb float-sm-left">
+          <li class="breadcrumb-item"><a href="/forum">Forum</a></li>
+          [$BreadCrumb]
+        </ul>
+      </div>
+      <div class="col-sm-3 d-none right">
+        ...
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+
+
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- forum list -->
+      <section class="forum-list col-lg-9 connectedSortable">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Forum in "[$CategoryTitle]" category</h3>
+          </div>
+          <div class="card-body">
+            <ul>
+            [foreach from=$Forums item=aItem type=table]
+              <li><a href="[baseurl]forum/[aItem.id]/[aItem.name filter=permalink]">[aItem.name]</a> <span class="small">, [aItem.forum_topics] topics</span>
+                <br><span class="small">[aItem.description]</span>
+              </li>
+            [/foreach from=$Forums]
+            </ul>
+          </div>
+        </div>
+    
+        <div class="card topic-last">
+          <div class="card-header">
+            <h3 class="card-title">Random Topic</h3>
+          </div>
+          <div class="card-body">
+            [text mod=_forum func=randomtopic]
+          </div>
+        </div>
+
+
+      </section>
+      <!-- /forum list -->
+
+      <section class="col-lg-3 connectedSortable">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Last Articles</h3>
+          </div>
+          <div class="card-body global-list">
+            [text mod=_article_ func=lastarticle]
+          </div>
+        </div>
+
+        <div class="card topic-last">
+          <div class="card-header">
+            <h3 class="card-title">Last Topic</h3>
+          </div>
+          <div class="card-body">
+            [text mod=_forum func=lasttopic]
+          </div>
+        </div>
+
+        
+      </section>
+    </div>
+
+  </div>
+  
+</section>
