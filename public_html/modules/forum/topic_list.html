@@ -1,0 +1,93 @@
+<script src="[baseurl]modules/forum/js/forum.js?_=73"></script>
+
+<section class="content-header">
+
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-9">
+        <ul class="breadcrumb float-sm-left">
+          <li class="breadcrumb-item"><a href="/forum">Forum</a></li>
+          [$BreadCrumb]
+        </ul>
+      </div>
+      <div class="col-sm-3 d-none right">
+        ...
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+
+
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- forum list -->
+      <section class="topic-list col-lg-9 connectedSortable">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Last topics at [$ForumName] [$CategoryTitle]</h3>
+            <div class="card-tools">
+              [if __is_logged_in__ eq 0]
+              <span class="small"><a href="/forum/[$ForumId]/[$ForumName filter=permalink]/new/"><i class="far fa-comment-alt"></i> &nbsp;Start New Topic</a></span>
+              [/if]
+              <button type="button" class="btn btn-tool" data-card-widget="hide">
+              </button>    
+            </div>
+          </div>
+          <div class="card-body">
+            <ul>
+            [foreach from=$Topics item=aItem type=table]
+              <li><a href="[baseurl]thread/[$CategoryTitle filter=permalink]/[aItem.id]/[aItem.title filter=permalink]">[aItem.title]</a>,<br> <span class="small">by <a href="[baseurl]profile/[aItem.username]">@[aItem.username]</a> at [aItem.time dateformat=human] with [aItem.replies] replies</span>
+              </li>
+            [/foreach from=$Topics]
+            </ul>
+          </div>
+          <div class="card-footer">
+            <div class="pagination">
+              <ul class="">
+                <li>Pages:</li>
+                [$Pagination]
+              </ul>
+            </div>
+          </div>
+        </div>
+    
+
+      </section>
+      <!-- /forum list -->
+
+      <section class="col-lg-3 connectedSortable">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Last Articles</h3>
+          </div>
+          <div class="card-body global-list">
+            [text mod=_article_ func=lastarticle]
+          </div>
+        </div>
+
+        <div class="card topic-last">
+          <div class="card-header">
+            <h3 class="card-title">Last Topic</h3>
+          </div>
+          <div class="card-body">
+            [text mod=_forum func=lasttopic]
+          </div>
+        </div>
+        
+        <div class="card topic-last">
+          <div class="card-header">
+            <h3 class="card-title">Random Topic</h3>
+          </div>
+          <div class="card-body">
+            [text mod=_forum func=randomtopic]
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+  </div>
+  
+</section>

@@ -1,0 +1,167 @@
+<script>
+  moduleName = 'thread';
+  referenceId = [$ThreadId];
+  referenceTitle = '[$TopicName]';
+
+  let PageOfThread = [$PageNumber];
+  let ThreadId = [$ThreadId];
+  let ThreadSlug = "[$ThreadSlug]";
+  let Thread = {};
+  Thread.id = [$ThreadId];
+  Thread.slug = "[$ThreadSlug]";
+  Thread.currentPage = [$PageNumber];
+  Thread.maxNumberOfPage = [$MaxNumberOfPage];
+  Thread.url = "[$ThreadUrl]";
+  let ThemeFullPath = "[themefullpath]";
+</script>
+<script src="[baseurl]modules/forum/js/forum.js?_=79"></script>
+<script src="[baseurl]modules/forum/js/forum-topic-edit.js?_=79"></script>
+<link rel="stylesheet" href="/modules/forum/css/style.css?_=79">
+<section class="content-header">
+
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-9">
+        <ul class="breadcrumb float-sm-left">
+          <li class="breadcrumb-item"><a href="/forum">Forum</a></li>
+          [$BreadCrumb]
+        </ul>
+      </div>
+      <div class="col-sm-3 d-none right">
+        ...
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+
+
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- thread -->
+      <section class="thread col-lg-9 connectedSortable">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">[$Prefix filter=defaultempty] [$TopicName]</h3>
+            [if $Obsolete eq 0]
+            <div class="ribbon-wrapper ribbon-lg">
+              <div class="ribbon bg-secondary">obsolete</div>
+            </div>
+            [/if]
+            <div class="card-tools">
+              <span class="small thread-view">&nbsp;</span>
+            </div>
+
+          </div>
+          <div class="card-body">
+            <div class="timeline timeline-inverse">
+              <div class="time-label"></div>
+
+              [foreach from=$Threads item=aItem type=table]
+              <div id="post-[aItem.post_id]">
+                <i class="user-photo-small"><a href="/profile/[aItem.username]"><img class="img-circle img-bordered-sm" src="[baseurl]profile-image/[aItem.gravatar].jpg" alt="user image" onerror="this.onerror=null; this.src='/profile-image/default.png';"></a></i>
+                <div class="timeline-item">
+                  <span class="time" title='[aItem.post_time dateformat="yyyy/mm/dd"]'><i class="far fa-clock"></i> [aItem.post_time dateformat=human]</span>
+                  <h3 class="timeline-header"><a href="/profile/[aItem.username]">[aItem.username]</a></h3>
+                  <div class="timeline-body">[aItem.post_text filter=multifilter]</div>
+                </div>
+              </div>
+              [/foreach from=$Threads]
+
+              <div id="last"></div>
+              [if __is_logged_in__ eq 0]
+              <hr />
+              <div id="thread-reply" class="xhide">
+                <div class="timeline-item">
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <textarea id="ReplyText" class="form-control disabled" oninput="auto_grow(this)" placeholder="Enter your reply here..." style="height:50px !important;"></textarea>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 right">
+                      <button id="btnReply" type="button" class="btn btn-blockx bg-gradient-secondary btn-xs">Send Reply</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              [/if]
+
+
+              <div id="thread-more" class="timeline-item thread-more">more ...</div>
+              <div><i class="end-point far fa-clock bg-gray"></i><div class="thread-pages ">
+                <div class="row">
+                  <div class="col">
+                    <ul class="">
+                      <li>Pages:</li>
+                      [$Pagination] 
+                    </ul>
+                  </div>
+                  <div class="col right">
+                      [if __is_logged_in__ neq 0]
+                      <span class="btn-login reply pointer"><i class="far fa-comment"></i> reply </span> |
+                      [/if]
+                    <span class="item" ><a id="report-obsolete"  href="#" class="login-required" data-toggle="modal" data-target="#obsolete-modal"><i class="fas fa-ban"></i> Report Obsolete</a></span>
+                  </div>
+
+                </div>
+              </div></div>
+
+            </div>
+          </div>
+        </div>
+    
+
+      </section>
+      <!-- /thread -->
+
+      <section class="col-lg-3 connectedSortable">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Last Articles</h3>
+          </div>
+          <div class="card-body global-list">
+            [text mod=_article_ func=lastarticle]
+          </div>
+        </div>
+
+        <div class="card topic-last">
+          <div class="card-header">
+            <h3 class="card-title">Last Topic</h3>
+          </div>
+          <div class="card-body">
+            [text mod=_forum func=lasttopic]
+          </div>
+        </div>
+        
+        <div class="card topic-last">
+          <div class="card-header">
+            <h3 class="card-title">Random Topic</h3>
+          </div>
+          <div class="card-body">
+            [text mod=_forum func=randomtopic]
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+  </div>
+  
+</section>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script>
+$(function () {
+  'use strict'
+
+  if (1 == Thread.maxNumberOfPage){
+    $('#thread-more').addClass('hide');
+  }
+  [if __is_logged_in__ eq 0]
+  EnableLoginRequiredFeature()
+  [/if]
+
+});
+</script>

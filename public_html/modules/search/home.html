@@ -1,0 +1,75 @@
+<script src="[baseurl]modules/search/js/search.js?_=67"></script>
+
+<section class="content-header">
+</section>
+<section class="content">
+    <div id="search-container" class="lockscreen-wrapper">
+        <div class="lockscreen-item" style="width: auto; max-width: 600px !important;">
+            <div class="lockscreen-image">
+                <img src="[themefullpath]/images/others/search01.png" alt="User Image">
+            </div>
+            <form class="lockscreen-credentials">
+                <div class="input-group">
+                    <input id="query" type="text" class="form-control" placeholder="search ..." value="[$Query]">
+                    <div class="input-group-append">
+                        <button id="btnSearch" type="button" class="btn"><i id="iconSearch" class="fas fa-search text-muted"></i></button>
+                    </div>
+                </div>
+            </form>                
+        </div>
+        <div class="help-block text-center">
+            Masukkan kata kunci yang akan dicari
+        </div>            
+    </div>  
+
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <section id="search-result" class="col-lg-9 connectedSortable">
+                <div id="news-search-result" class="hide card">
+                    <div class="card-header">
+                        <h3 class="card-title">Article Search Result</h3>
+                    </div>
+                    <div class="content card-body global-list">
+                        ...
+                    </div>
+                </div>                            
+
+                <div id="forum-search-result" class="hide card">
+                    <div class="card-header">
+                        <h3 class="card-title">Forum Search Result</h3>
+                    </div>
+                    <div class="content card-body global-list">
+                        ...
+                    </div>
+                </div>                            
+    
+
+            </section>            
+            
+            <section class="col-lg-3 connectedSortable">
+
+                <div id="highlight" class="card hide">
+                    <div class="card-header">
+                        <h3 class="card-title">Highlight</h3>
+                    </div>
+                    <div class="card-body global-list">
+                        Fitur <a href="/search/">pencarian</a> ini masih menggunakan metode yang sederhana, tanpa rekomendasi maupun prediksi.
+                    </div>
+                </div>
+                    
+                <div id="history" class="card hide">
+                    <div class="card-header">
+                        <h3 class="card-title">History</h3>
+                    </div>
+                    <div class="card-body global-list">
+                        &nbsp;
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </div>
+  
+</section>
