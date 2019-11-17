@@ -198,6 +198,7 @@ nbproject
 .svn
 .CVS
 .idea
+._*
 node_modules
 dist
 
@@ -209,16 +210,12 @@ dist
 *.o
 
 backup/
-public_html/ztemp/cache/*
-public_html/ztemp/error_log/*
-public_html/ztemp/sessions/*
+public_html/ztemp/cache/*.txt
+public_html/ztemp/error_log/*log
+public_html/ztemp/sessions/*ses
 
 *.dll
 *.exe
 *.bin
 backup.bat
 backup.sh
-ftp-all.sh
-ftp.sh
-
-
