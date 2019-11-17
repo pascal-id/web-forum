@@ -71,7 +71,7 @@ begin
 
   userId := FUser['uid'];
   regDateAsInteger := FUser['regdate'];
-  lastVisitAsInteger := FUser['lastvisit'];
+  lastVisitAsInteger := FUser['lastvisit']; //TODO: get from session
   ThemeUtil.Assign('$UserName', FUser['username']);
   ThemeUtil.Assign('$Title', FUser['username'] + ' profile');
   ThemeUtil.Assign('$Gravatar', FUser['gravatar']);
