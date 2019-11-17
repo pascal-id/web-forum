@@ -22,6 +22,9 @@ const
   ARTICLE_SAVE_ERROR = 'failed to save article';
   TOPIC_SAVE_ERROR = 'failed to save new topic';
 
+  ACTIVITY_MONTH_FORMAT = 'MMM yyyy';
+  ACTIVITY_DATE_FORMAT = 'yyyy-mm-dd';
+
   LANGUAGE_DEFAULT = 'id';
 
 

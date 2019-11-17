@@ -6,7 +6,10 @@ interface
 
 uses
   fpjson, common,
-  Classes, SysUtils, database_lib, string_helpers, dateutils, datetime_helpers;
+  Classes, SysUtils, database_lib, string_helpers, dateutils, datetime_helpers,
+  json_helpers;
+
+{$include ../../common/common.inc}
 
 type
 
@@ -25,7 +28,8 @@ type
 
     function FindByUserName(const AUserName: String): Boolean;
     function FindByEmail(const AEmail: String): Boolean;
-    function TimeLine(AUserId: integer; AUserName: String): TJSONArray;
+    function Activity(AUserId: integer; AUserName: String): TJSONArray;
+    function Comments(AUserId: integer; AUserName: String): TJSONArray;
     function AddFromFacebook(AId: Int64; AFirstName, ALastName: String; AEmail: String; AExistingUserID: Integer = 0): Boolean;
     function AddMapping(ATypeId, AUserId: Integer; AReferenceId: String; AEmail: String): boolean;
 
@@ -38,6 +42,8 @@ type
   end;
 
 implementation
+
+uses common_lib;
 
 function TUserModel.getArticleCount: Integer;
 var
@@ -148,9 +154,10 @@ begin
     + 'post_count, signature, level, rank, user_from');
 end;
 
-function TUserModel.TimeLine(AUserId: integer; AUserName: String): TJSONArray;
+function TUserModel.Activity(AUserId: integer; AUserName: String): TJSONArray;
 var
-  selectTimeLine: String;
+  i, postDate: Integer;
+  selectTimeLine, url, timeLabel, timeLabelTemp: String;
 begin
   Result := TJSONArray.Create;
   if AUserId = 0 then
@@ -165,7 +172,7 @@ begin
     + #10'WHERE topic_status=0 AND topic_poster=' + AUserId.ToString
     + #10'UNION ALL'
     + #10'SELECT ''news'' post_type, nid id, title, unix_timestamp(`from`) date FROM news'
-    + #10'WHERE contributor="'+AUserName+'"'
+    + #10'WHERE contributor="'+AUserName+'" AND published_status=0'
     + #10'ORDER BY date desc'
     + #10'LIMIT 10'
     + #10') AS timeline ORDER BY date LIMIT 10';
@@ -175,6 +182,98 @@ begin
   Data.SQL.Text := selectTimeLine;
   Data.Open;
   DataToJSON(Data, Result, False);
+
+  timeLabel := 'start';
+  if Result.Count > 0 then
+  begin
+    postDate := s2i(Result.Items[0].Value['date']);
+    if YearsBetween(Now, UnixToDateTime(postDate)) > 2 then
+    begin
+      timeLabel := UnixToDateTime(postDate).Format('yyyy');
+    end else begin
+      timeLabel := UnixToDateTime(postDate).Format(ACTIVITY_MONTH_FORMAT);
+    end;
+  end;
+  timeLabel := '---';
+
+  for i := 0 to Result.Count-1 do
+  begin
+    url := '';
+
+    // time label
+    postDate := s2i(Result.Items[i].Value['date']);
+    timeLabelTemp := UnixToDateTime(postDate).Format(ACTIVITY_DATE_FORMAT);
+    if YearsBetween(Now, UnixToDateTime(postDate)) > 2 then
+    begin
+      timeLabelTemp := UnixToDateTime(postDate).Format('yyyy');
+      if timeLabelTemp = timeLabel then
+        timeLabelTemp := ''
+      else
+        timeLabel := timeLabelTemp;
+      TJSONObject(Result.Items[i]).Add('time_label',timeLabelTemp);
+    end else begin
+      timeLabelTemp := UnixToDateTime(postDate).Format(ACTIVITY_MONTH_FORMAT);
+      if timeLabelTemp = timeLabel then
+        timeLabelTemp := ''
+      else
+        timeLabel := timeLabelTemp;
+      TJSONObject(Result.Items[i]).Add('time_label',timeLabelTemp);
+    end;
+
+
+
+    // prefix
+    if Result.Items[i].Value['post_type'] = 'topic' then
+    begin
+      url := 'thread/topic/' + Result.Items[i].Value['id'] +'/' +  GenerateSlug(Result.Items[i].Value['title']);
+      TJSONObject(Result.Items[i]).Add('prefix','post');
+    end;
+    if Result.Items[i].Value['post_type'] = 'news' then
+    begin
+      url := 'news/' + Result.Items[i].Value['id'] +'/' + GenerateSlug(Result.Items[i].Value['title']);
+      TJSONObject(Result.Items[i]).Add('prefix','share');
+    end;
+
+    TJSONObject(Result.Items[i]).Add('url',url);
+  end;
+end;
+
+function TUserModel.Comments(AUserId: integer; AUserName: String): TJSONArray;
+var
+  i: Integer;
+  url, selectComments: String;
+begin
+  Result := TJSONArray.Create;
+  if AUserId = 0 then
+    exit;
+
+  selectComments := 'SELECT * FROM ('
+    + #10'SELECT p.post_id id, p.topic_id, p.post_time date, t.topic_title title, pt.post_text text'
+    + #10'FROM phpbb_posts p'
+    + #10'LEFT JOIN phpbb_topics t ON t.topic_id=p.topic_id'
+    + #10'LEFT JOIN phpbb_posts_text pt ON pt.post_id=p.post_id'
+    + #10'WHERE t.topic_status=0 AND poster_id=' + AUserId.ToString
+    + #10'GROUP BY topic_id'
+    + #10'ORDER BY date DESC'
+    + #10'LIMIT 10'
+    + #10') comments ORDER BY date';
+  if Data.Active then
+    Data.Close;
+  Data.SQL.Text := selectComments;
+  Data.Open;
+  DataToJSON(Data, Result, False);
+
+  for i := 0 to Result.Count-1 do
+  begin
+    url := '';
+    url := 'thread/topic/' + Result.Items[i].Value['topic_id'] + '/'
+      + GenerateSlug(Result.Items[i].Value['title']) + '/'
+      + '#post-' + Result.Items[i].Value['id'];
+
+    TJSONObject(Result.Items[i]).Add('url',url);
+  end;
+
+
 end;
 
 function TUserModel.AddFromFacebook(AId: Int64; AFirstName, ALastName: String;

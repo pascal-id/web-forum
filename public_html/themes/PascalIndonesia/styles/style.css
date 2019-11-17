@@ -238,6 +238,10 @@ div.is-invalid {
   cursor: pointer;
 }
 
+.pre-line {
+  white-space: pre-line;
+}
+
 #btnGoTop {
   display: none; /* Hidden by default */
   position: fixed; /* Fixed/sticky position */
