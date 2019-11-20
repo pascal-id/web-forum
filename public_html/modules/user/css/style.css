@@ -1,4 +1,10 @@
 
+img.profile-user-img {
+  width: 100px;
+  height: 100px;
+  background: #eeeeee;
+}
+
 div.home-last-article div.card-body ul {
   display: block;
   padding: 0px;

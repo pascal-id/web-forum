@@ -29,7 +29,7 @@
                 <div class="text-center">
                   <img class="profile-user-img img-fluid img-circle"
                        src="https://img.pascal-id.org/profile-image/[$Gravatar].jpg"
-                       alt="User profile picture">
+                       >
                 </div>
 
                 <h3 class="profile-username text-center">[$UserName]</h3>
@@ -48,7 +48,7 @@
                     [$UserRankName]<br />
                   [/if]                  
                   <span class="text-muted text-center small">Join Date : [$RegDate filter=date xdateformat="yyyy/mm/dd"]
-                    <br />Last visit: [$User.lastvisit filter=dateformathuman]
+                    <br />Last visit: (*hidden) <!-- [$LastVisit filter=dateformathuman] -->
                   </span>
                 </p>
                 
