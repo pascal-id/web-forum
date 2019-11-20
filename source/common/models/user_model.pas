@@ -172,7 +172,7 @@ begin
     + #10'WHERE topic_status=0 AND topic_poster=' + AUserId.ToString
     + #10'UNION ALL'
     + #10'SELECT ''news'' post_type, nid id, title, unix_timestamp(`from`) date FROM news'
-    + #10'WHERE contributor="'+AUserName+'" AND published_status=0'
+    + #10'WHERE contributor="'+AUserName+'" AND published_status=0 AND `from` < "'+Now.AsString+'"'
     + #10'ORDER BY date desc'
     + #10'LIMIT 10'
     + #10') AS timeline ORDER BY date LIMIT 10';

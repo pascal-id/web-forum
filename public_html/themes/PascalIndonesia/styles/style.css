@@ -269,3 +269,10 @@ div.is-invalid {
 .hometext-container .CodeMirror, .CodeMirror-scroll {
 	min-height: 100px !important;
 }
+span.code-inline {
+  padding-left: 2px;
+  padding-right: 2px;
+  font-family: "Fira Code", "Courier New",Courier,Monospace !important;
+  font-size: .90rem;
+  background: #f0f0f0;
+}
