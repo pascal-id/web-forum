@@ -171,7 +171,6 @@ function TThreadController.Tag_MainContent_Handler(const TagName: string;
 begin
   ThemeUtil.AssignVar['$Threads'] := @FTopics.Data;
   Result := ThemeUtil.RenderFromContent(nil, '', 'modules/forum/thread.html');
-  Result := MarkdownToHTML(Result);
   Result := ReplaceFromLegacy(Result);
   Result := Result.Replace('\''', '''');
 end;

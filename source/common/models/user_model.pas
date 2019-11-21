@@ -156,8 +156,9 @@ end;
 
 function TUserModel.Activity(AUserId: integer; AUserName: String): TJSONArray;
 var
-  i, postDate: Integer;
-  selectTimeLine, url, timeLabel, timeLabelTemp: String;
+  i: Integer;
+  s, selectTimeLine, url, timeLabel, timeLabelTemp: String;
+  postDate: TDateTime;
 begin
   Result := TJSONArray.Create;
   if AUserId = 0 then
@@ -168,14 +169,14 @@ begin
   //userName := Data['username'];
 
   selectTimeLine := 'SELECT * FROM ('
-    + #10'SELECT ''topic'' post_type, topic_id id, topic_title title, topic_time date FROM phpbb_topics'
+    + #10'SELECT ''topic'' post_type, topic_id id, topic_title title, topic_time time_stamp, FROM_UNIXTIME(topic_time) date FROM phpbb_topics'
     + #10'WHERE topic_status=0 AND topic_poster=' + AUserId.ToString
     + #10'UNION ALL'
-    + #10'SELECT ''news'' post_type, nid id, title, unix_timestamp(`from`) date FROM news'
+    + #10'SELECT ''news'' post_type, nid id, title, unix_timestamp(`from`) time_stamp, `from` date FROM news'
     + #10'WHERE contributor="'+AUserName+'" AND published_status=0 AND `from` < "'+Now.AsString+'"'
     + #10'ORDER BY date desc'
     + #10'LIMIT 10'
-    + #10') AS timeline ORDER BY date LIMIT 10';
+    + #10') AS timeline ORDER BY date DESC LIMIT 10';
 
   if Data.Active then
     Data.Close;
@@ -186,12 +187,13 @@ begin
   timeLabel := 'start';
   if Result.Count > 0 then
   begin
-    postDate := s2i(Result.Items[0].Value['date']);
-    if YearsBetween(Now, UnixToDateTime(postDate)) > 2 then
+    s := Result.Items[0].Value['date'];
+    postDate := s.AsDateTime;
+    if YearsBetween(Now, postDate) > 2 then
     begin
-      timeLabel := UnixToDateTime(postDate).Format('yyyy');
+      timeLabel := postDate.Format('yyyy');
     end else begin
-      timeLabel := UnixToDateTime(postDate).Format(ACTIVITY_MONTH_FORMAT);
+      timeLabel := postDate.Format(ACTIVITY_MONTH_FORMAT);
     end;
   end;
   timeLabel := '---';
@@ -201,18 +203,19 @@ begin
     url := '';
 
     // time label
-    postDate := s2i(Result.Items[i].Value['date']);
-    timeLabelTemp := UnixToDateTime(postDate).Format(ACTIVITY_DATE_FORMAT);
-    if YearsBetween(Now, UnixToDateTime(postDate)) > 2 then
+    s := Result.Items[i].Value['date'];
+    postDate := s.AsDateTime;
+    timeLabelTemp := postDate.Format(ACTIVITY_DATE_FORMAT);
+    if YearsBetween(Now, postDate) > 2 then
     begin
-      timeLabelTemp := UnixToDateTime(postDate).Format('yyyy');
+      timeLabelTemp := postDate.Format('yyyy');
       if timeLabelTemp = timeLabel then
         timeLabelTemp := ''
       else
         timeLabel := timeLabelTemp;
       TJSONObject(Result.Items[i]).Add('time_label',timeLabelTemp);
     end else begin
-      timeLabelTemp := UnixToDateTime(postDate).Format(ACTIVITY_MONTH_FORMAT);
+      timeLabelTemp := postDate.Format(ACTIVITY_MONTH_FORMAT);
       if timeLabelTemp = timeLabel then
         timeLabelTemp := ''
       else
@@ -256,7 +259,7 @@ begin
     + #10'GROUP BY topic_id'
     + #10'ORDER BY date DESC'
     + #10'LIMIT 10'
-    + #10') comments ORDER BY date';
+    + #10') comments ORDER BY date DESC';
   if Data.Active then
     Data.Close;
   Data.SQL.Text := selectComments;

@@ -106,7 +106,6 @@ begin
   //die(s);
   ThemeUtil.AssignVar['$Article'] := @FNews.Data;
   Result := ThemeUtil.RenderFromContent(nil, '', 'modules/article/detail.html');
-  Result := MarkdownToHTML(Result);
   Result := ReplaceFromLegacy(Result);
   Result := Result.Replace('\''', '''');
 

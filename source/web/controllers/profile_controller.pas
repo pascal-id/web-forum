@@ -95,7 +95,7 @@ begin
 
   ActivityAsArray := FUser.Activity(userId, userName);
   CommentAsArray := FUser.Comments(userId, userName);
-  //die(CommentAsArray.AsJSON);
+  //die(ActivityAsArray.AsJSON);
 
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
   Response.Content := ThemeUtil.Render();
