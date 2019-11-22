@@ -180,15 +180,16 @@ end;
 
 procedure SetThemeParameter;
 begin
+  ThemeUtil.Assign(TAG_USER_CAN_EDIT, '1');
   if not UserSession.IsExpired then
-    ThemeUtil.Assign('__is_logged_in__', '0')
+    ThemeUtil.Assign(TAG_IS_LOGGED_IN, '0')
   else
-    ThemeUtil.Assign('__is_logged_in__', '1');
+    ThemeUtil.Assign(TAG_IS_LOGGED_IN, '1');
 
   //_SESSION['uid'] := UserSession.UserId; // move -> facebook login handler
-  ThemeUtil.Assign('__username__', UserSession.UserName);
-  ThemeUtil.Assign('__gravatar__', UserSession.Gravatar);
-  ThemeUtil.Assign('__ipaddress__', UserSession.IPAddress);
+  ThemeUtil.Assign(TAG_USERNAME, UserSession.UserName);
+  ThemeUtil.Assign(TAG_GRAVATAR, UserSession.Gravatar);
+  ThemeUtil.Assign(TAG_IP_ADDRESS, UserSession.IPAddress);
 end;
 
 procedure ResetSession;

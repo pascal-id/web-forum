@@ -9,7 +9,7 @@ unit news_controller;
   curl "http://www.pascal-id.test/api/news/last/?limit=2"
 
   [x] News Detail
-  curl "http://www.pascal-id.test/api/news/163/2019-10-20/asdasd"
+  curl "http://www.pascal-id.test/api/news/322/lazarus-release-2.0.6"
 
 }
 
@@ -117,11 +117,10 @@ end;
 procedure TNewsDetailModule.Get;
 var
   newsIndex: Integer;
-  newsDate, newsSlug: String;
+  newsSlug: String;
 begin
   newsIndex := _GET['$1'].AsInteger;
-  newsDate := _GET['$2'];
-  newsSlug := _GET['$3'];
+  newsSlug := _GET['$2'];
 
   if newsIndex = 0 then
     OutputJson( 404, ERR_INVALID_PARAMETER);
