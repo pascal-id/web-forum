@@ -32,6 +32,7 @@ type
     function Comments(AUserId: integer; AUserName: String): TJSONArray;
     function AddFromFacebook(AId: Int64; AFirstName, ALastName: String; AEmail: String; AExistingUserID: Integer = 0): Boolean;
     function AddMapping(ATypeId, AUserId: Integer; AReferenceId: String; AEmail: String): boolean;
+    function IsAdministrator(AUserId: Integer): Boolean;
 
     property CurrentUserName: String read FCurrentUserName;
     property RankName: String read getRankName;
@@ -170,7 +171,7 @@ begin
 
   selectTimeLine := 'SELECT * FROM ('
     + #10'SELECT ''topic'' post_type, topic_id id, topic_title title, topic_time time_stamp, FROM_UNIXTIME(topic_time) date FROM phpbb_topics'
-    + #10'WHERE topic_status=0 AND topic_poster=' + AUserId.ToString
+    + #10'WHERE topic_status=0 AND obsolete=1 AND topic_poster=' + AUserId.ToString
     + #10'UNION ALL'
     + #10'SELECT ''news'' post_type, nid id, title, unix_timestamp(`from`) time_stamp, `from` date FROM news'
     + #10'WHERE contributor="'+AUserName+'" AND published_status=0 AND `from` < "'+Now.AsString+'"'
@@ -323,6 +324,18 @@ begin
     + #10'('+ATypeId.ToString+','+AUserId.ToString+',"'+AReferenceId+'", "'+AEmail+'", NOW())'
   );
   Result := True;
+end;
+
+function TUserModel.IsAdministrator(AUserId: Integer): Boolean;
+begin
+  Result := False;
+  if Select('level').Where('uid='+AUserId.ToString).Open() then
+  begin
+    if RecordCount = 0 then
+      Exit;
+    if Value['level'] = 1 then
+      Result := True;
+  end;
 end;
 
 end.

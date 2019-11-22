@@ -197,6 +197,10 @@ function auto_grow(element) {
   element.style.height = (element.scrollHeight)+"px";
 }
 
+function PageReload(){
+  window.location.reload(true);
+}
+
 function log(AMessage){
   console.log(AMessage);
 }

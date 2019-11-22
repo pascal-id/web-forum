@@ -2,9 +2,14 @@
   moduleName = 'article';
   referenceId = [$Article.nid];
   referenceTitle = '[$Article.title]';
+  referenceSlug = '[$Article.slug]';
+  referenceUrl = '[$ArticleUrl]';
 </script>
-<script src="[baseurl]modules/article/js/article.js?_=79"></script>
-<link rel="stylesheet" href="/modules/article/css/style.css?_=79" type="text/css" media="all" />
+<script src="[baseurl]modules/article/js/article.js?_=80"></script>
+ [if __can_edit__ eq 0]
+<script src="[baseurl]modules/article/js/article-edit.js?_=80"></script>
+ [/if]
+<link rel="stylesheet" href="/modules/article/css/style.css?_=80" type="text/css" media="all" />
 <section class="content-header">
     <div class="container-fluid"></div>
 </section>
@@ -17,6 +22,11 @@
         <div class="card article">
           <div class="card-header ">
             <h1 class="card-title">[$Title]</h1>
+            <div class="card-tools">
+              [if __can_edit__ eq 0]
+              <span class="small thread-view"><a href="#">edit</a></span>
+              [/if]
+            </div>
             [if $Obsolete eq 0]
             <div class="ribbon-wrapper ribbon-lg">
               <div class="ribbon bg-secondary">obsolete</div>
@@ -25,8 +35,8 @@
             <br />
             <span class="small">by <a href="[baseurl]profile/[$Article.contributor]">[$Article.contributor]</a> in <a href="[baseurl]article/category/0/[$Article.category_name filter=permalink]">[$Article.category_name]</a> [$Date xfilter=dateformathuman] <span class="hide">[$Article.counter]</span></span>
           </div>
-          <div class="card-body">[$Article.hometext filter=multifilter]
-            <br />[$Article.bodytext filter=multifilter]            
+          <div class="card-body"><div class="hometext">[$Article.hometext filter=multifilter]</div>
+            <div class="bodytext">[$Article.bodytext filter=multifilter]</div>            
           </div>
           <div class="card-notes small">[$Article.notes]</div>
           <div class="card-footer">
@@ -71,3 +81,7 @@
   </div>
   
 </section>
+ [if __can_edit__ eq 0]
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+ [/if]

@@ -14,7 +14,7 @@ uses news_controller, news_search_controller;
 initialization
   Route[ '/search/'] := TNewsSearchController;
   Route[ '/last/'] := TNewsLastModule;
-  Route[ '/([0-9]+)/([0-9\-]+)/(.*)'] := TNewsDetailModule;
+  Route[ '/([0-9]+)/(.*)'] := TNewsDetailModule;
   Route[ '/'] := TNewsModule;
 
 end.

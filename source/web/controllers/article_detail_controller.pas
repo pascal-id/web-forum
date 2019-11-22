@@ -5,11 +5,16 @@ unit article_detail_controller;
 interface
 
 uses
-  news_model,
+  news_model, user_model,
   Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs,
   fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
+{$include ../../common/common.inc}
+
 type
+
+  { TArticleDetailController }
+
   TArticleDetailController = class(TMyCustomController)
   private
     ArticleId: integer;
@@ -23,6 +28,7 @@ type
 
     procedure Get; override;
     procedure Post; override;
+    procedure Put; override;
   end;
 
 implementation
@@ -74,6 +80,24 @@ begin
   if not FNews.Detail(articleId, previewOnly) then
     Redirect('/news/');
 
+  if not UserSession.IsExpired then
+  begin
+    if UserSession.UserName = FNews['contributor'] then
+      ThemeUtil.Assign(TAG_USER_CAN_EDIT, '0')
+    else
+    begin
+      with TUserModel.Create() do
+      begin
+        if IsAdministrator(UserSession.UserId) then
+        begin
+          ThemeUtil.Assign(TAG_USER_CAN_EDIT, '0');
+        end;
+        Free;
+      end;
+
+    end;
+  end;
+
   title := FNews['title'];
   dt := FNews['date'];
   s := '2019-11-10 10:11:00';
@@ -84,6 +108,7 @@ begin
 
 
   ThemeUtil.Assign('$Date', dt.HumanReadable);
+  ThemeUtil.Assign('$ArticleUrl', BaseURL + 'news/' + articleId.ToString + '/' + String(FNews['slug']));
 
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
   //ThemeUtil.TrimWhiteSpace := False;
@@ -94,6 +119,53 @@ end;
 // POST Method Handler
 procedure TArticleDetailController.Post;
 begin
+end;
+
+procedure TArticleDetailController.Put;
+var
+  homeText, bodyText: String;
+begin
+  GetUserSessionInfo;
+  SetThemeParameter;
+  if UserSession.IsExpired then
+    OutputJson(404, ERR_NOT_PERMITTED);
+
+  ArticleId := _POST['id'].AsInteger;
+  if ArticleId = 0 then
+    OutputJson(404, ERR_DATA_NOT_FOUND);
+
+  homeText := UrlDecode(_POST['homeText']);
+  bodyText := UrlDecode(_POST['bodyText']);
+  if (homeText.IsEmpty AND bodyText.IsEmpty) then
+    OutputJson(404, ERR_INVALID_PARAMETER);
+
+  DataBaseInit;
+  QueryExec('SET CHARACTER SET utf8mb4;');
+  if not FNews.Detail(articleId, True) then
+    OutputJson(404, ERR_DATA_NOT_FOUND);
+
+  //check permission
+  if UserSession.UserName <> FNews['contributor'] then
+  begin
+    with TUserModel.Create() do
+    begin
+      if not IsAdministrator(UserSession.UserId) then
+      begin
+        Free;
+        OutputJson(400, ERR_NOT_PERMITTED);
+      end;
+      Free;
+    end;
+  end;
+
+  if not homeText.IsEmpty then
+    FNews['hometext'] := homeText;
+  if not bodyText.IsEmpty then
+    FNews['bodytext'] := bodyText;
+  if not FNews.Save('nid='+ArticleId.ToString) then
+    OutputJson(404, ARTICLE_SAVE_ERROR);
+
+  OutputJson(200, OK);
 end;
 
 function TArticleDetailController.Tag_MainContent_Handler(const TagName: string;
