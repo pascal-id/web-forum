@@ -22,6 +22,15 @@ const
   ARTICLE_SAVE_ERROR = 'failed to save article';
   TOPIC_SAVE_ERROR = 'failed to save new topic';
 
+  TAG_USER_CAN_EDIT = '__can_edit__';
+  TAG_IS_LOGGED_IN = '__is_logged_in__';
+  TAG_USERNAME = '__username__';
+  TAG_GRAVATAR = '__gravatar__';
+  TAG_IP_ADDRESS = '__ipaddress__';
+
+  ACTIVITY_MONTH_FORMAT = 'MMM yyyy';
+  ACTIVITY_DATE_FORMAT = 'yyyy-mm-dd';
+
   LANGUAGE_DEFAULT = 'id';
 
 

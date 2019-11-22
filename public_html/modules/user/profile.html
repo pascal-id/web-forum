@@ -1,4 +1,4 @@
-
+<link rel="stylesheet" href="/modules/user/css/style.css?_=80">
 
 <section class="content-header">
 
@@ -29,7 +29,7 @@
                 <div class="text-center">
                   <img class="profile-user-img img-fluid img-circle"
                        src="https://img.pascal-id.org/profile-image/[$Gravatar].jpg"
-                       alt="User profile picture">
+                       >
                 </div>
 
                 <h3 class="profile-username text-center">[$UserName]</h3>
@@ -48,7 +48,7 @@
                     [$UserRankName]<br />
                   [/if]                  
                   <span class="text-muted text-center small">Join Date : [$RegDate filter=date xdateformat="yyyy/mm/dd"]
-                    <br />Last visit: [$User.lastvisit filter=dateformathuman]
+                    <br />Last visit: (*hidden) <!-- [$LastVisit filter=dateformathuman] -->
                   </span>
                 </p>
                 
@@ -84,7 +84,7 @@
                 <hr>
 
                 <strong><i class="far fa-file-alt mr-1"></i> Signature</strong>
-                <p class="text-muted">[$Signature filter=multifilter]</p>
+                <p class="pre-line text-muted">[$Signature filter=multifilter]</p>
               </div>
               <!-- /.card-body -->
             </div>
@@ -95,20 +95,45 @@
       <div class="col-md-9">
         <div class="card">
           <div class="card-header p-2">
-            <ul class="nav nav-pills">
-              <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Activity</a></li>
-              <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a></li>
+            <ul class="nav nav-pills small">
+              <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab"><b>Activity</b></a></li>
+              <li class="nav-item"><a class="nav-link" href="#interaction" data-toggle="tab"><b>Interaction</b></a></li>
               <li class="nav-item"><a class="nav-link disabled" href="#settings" data-toggle="tab">Settings</a></li>
             </ul>
           </div><!-- /.card-header -->
           <div class="card-body">
             <div class="tab-content">
               <div class="active tab-pane" id="activity">
-                [activity]
+
+                  <div class="timeline timeline-inverse">
+                      
+                      [foreach from=$Activity item=aItem type=jsondata]
+                      <div class="time-label hide"><span class="bg-info">[aItem.time_label filter=defaultempty]</span></div>
+                      <div id="activity-[aItem.id]">
+                        <i><img class="bg-white img-circle img-bordered-sm" src="/themes/PascalIndonesia/images/others/[aItem.post_type].png"></i>
+                        <div class="timeline-item">
+                          <span class="time" title='title time'><i class="far fa-clock"></i></span>
+                          <h3 class="timeline-header">[aItem.prefix] a [aItem.post_type] <a href="[baseurl][aItem.url]">[aItem.title]</a> [aItem.date filter=dateformathuman]</h3>
+                        </div>
+                      </div>
+                      [/foreach from=$Activity]
+
+                      <div><i><img class="img-circle img-bordered-sm" src="/profile-image/default.png"></i></div>
+                  </div>
+
               </div>
-              <div class="tab-pane" id="timeline">
-                [timeline]
+
+              <div class="tab-pane" id="interaction">
+                <b>User sent comment(s) in the topic:</b>
+                <ul>
+                  [foreach from=$Comments item=aItem type=jsondata]
+                    <li id="[aItem.id]" rel="[aItem.post_type]">
+                      <a href="[baseurl][aItem.url]">[aItem.title]</a> at [aItem.date filter=dateformathuman]
+                    </li>
+                  [/foreach from=$Comments]
+                  </ul>  
               </div>
+
               <div class="tab-pane" id="settings">
                 [setting]
               </div>
@@ -123,3 +148,17 @@
   </div><!-- /.container-fluid -->
   
 </section>
+<script>
+  $(function () {
+
+
+    $( ".time-label" ).each(function() {
+      var label = $( this ).text();
+      if (label.length > 0){
+        $( this ).removeClass("hide");
+      }
+    });
+    
+
+  });
+</script>

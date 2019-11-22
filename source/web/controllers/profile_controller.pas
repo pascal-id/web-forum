@@ -17,6 +17,7 @@ type
       ): string;
     procedure BeforeRequestHandler(Sender: TObject; ARequest: TRequest);
   public
+    ActivityAsArray, CommentAsArray: TJSONArray;
     constructor CreateNew(AOwner: TComponent; CreateMode: integer); override;
     destructor Destroy; override;
 
@@ -52,8 +53,7 @@ end;
 procedure TProfileController.Get;
 var
   userName: String;
-  regDateAsInteger, lastVisitAsInteger: Integer;
-  timelineAsArray: TJSONArray;
+  userId, regDateAsInteger, lastVisitAsInteger: Integer;
 begin
   GetUserSessionInfo;
   SetThemeParameter;
@@ -69,8 +69,9 @@ begin
   if not FUser.FindByUserName(userName) then
     Redirect('/', 'User not found');
 
+  userId := FUser['uid'];
   regDateAsInteger := FUser['regdate'];
-  lastVisitAsInteger := FUser['lastvisit'];
+  lastVisitAsInteger := FUser['lastvisit']; //TODO: get from session
   ThemeUtil.Assign('$UserName', FUser['username']);
   ThemeUtil.Assign('$Title', FUser['username'] + ' profile');
   ThemeUtil.Assign('$Gravatar', FUser['gravatar']);
@@ -92,8 +93,9 @@ begin
     'https://img.pascal-id.org/' + 'profile-image/'+FUser['gravatar']+'.jpg',
     BaseURL + 'profile/'+FUser['username']);
 
-  //timelineAsArray := FUser.TimeLine(4, FUser['username']);
-  //todo: generate timeline
+  ActivityAsArray := FUser.Activity(userId, userName);
+  CommentAsArray := FUser.Comments(userId, userName);
+  //die(ActivityAsArray.AsJSON);
 
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
   Response.Content := ThemeUtil.Render();
@@ -108,6 +110,8 @@ function TProfileController.Tag_MainContent_Handler(const TagName: string;
   Params: TStringList): string;
 begin
   ThemeUtil.AssignVar['$User'] := @FUser.Data;
+  ThemeUtil.AssignVar['$Activity'] := @ActivityAsArray;
+  ThemeUtil.AssignVar['$Comments'] := @CommentAsArray;
   Result := ThemeUtil.RenderFromContent(nil, '', 'modules/user/profile.html');
 end;
 

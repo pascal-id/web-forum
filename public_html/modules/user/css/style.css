@@ -1,6 +1,40 @@
 
+img.profile-user-img {
+  width: 100px;
+  height: 100px;
+  background: #eeeeee;
+}
+
 div.home-last-article div.card-body ul {
   display: block;
   padding: 0px;
   list-style: none !important;
+}
+
+.timeline::before {
+  left: 13px !important;
+}
+
+#activity {
+}
+
+#activity .timeline > div {
+  margin-bottom: 5px;
+}
+#activity .timeline i {
+  float: left;
+  margin-left: 0px;
+}
+#activity .timeline i .img-circle {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+#activity .timeline .timeline-item {
+  margin-left: 35px;
+  margin-right: 0px;
+}
+
+#interaction ul {
+  padding-left: 20px;
 }
