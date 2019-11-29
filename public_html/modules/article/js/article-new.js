@@ -144,12 +144,13 @@ function SaveNewArticle(AArticle){
     data: AArticle,
     headers: {'Token':localToken},
     success: function(result){
+      var url = result.url;
       docCookies.setItem('article_title', '', null, '/');
       docCookies.setItem('article_hometext', '', null, '/');
       docCookies.setItem('article_bodytext', '', null, '/');
       
       swal('Siap ...', 'Draft artikel telah disimpan, mohon ditunggu untuk approval dari moderator.').then((value) => {
-        location.href = BaseURL + 'news/new/';
+        location.href = url;
       });
     },
     error: function (request, status, error) {

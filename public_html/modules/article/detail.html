@@ -7,9 +7,9 @@
 </script>
 <script src="[baseurl]modules/article/js/article.js?_=80"></script>
  [if __can_edit__ eq 0]
-<script src="[baseurl]modules/article/js/article-edit.js?_=80"></script>
+<script src="[baseurl]modules/article/js/article-edit.js?_=82"></script>
  [/if]
-<link rel="stylesheet" href="/modules/article/css/style.css?_=80" type="text/css" media="all" />
+<link rel="stylesheet" href="/modules/article/css/style.css?_=81" type="text/css" media="all" />
 <section class="content-header">
     <div class="container-fluid"></div>
 </section>
@@ -24,7 +24,7 @@
             <h1 class="card-title">[$Title]</h1>
             <div class="card-tools">
               [if __can_edit__ eq 0]
-              <span class="small thread-view"><a href="#">edit</a></span>
+              <span class="small thread-view"><a href="#" class="btnEditArticle">edit</a></span>
               [/if]
             </div>
             [if $Obsolete eq 0]
@@ -42,6 +42,7 @@
           <div class="card-footer">
             <a id="report-obsolete" href="#" class="small login-required" rel="article" data-toggle="modal" data-target="#obsolete-modal">» Report as Obsolete</a>
           </div>
+          <div class="pw-server-widget" data-id="wid-mv180s6i"></div>
         </div>
     
         <div class="card">
