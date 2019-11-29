@@ -4,6 +4,11 @@ var bodyTextMde;
 
 $(function () {
 
+  $(".btnEditArticle").click(function(event){
+    event.preventDefault();
+    swal('Double-Click ke text yang akan diedit.');
+  });
+
   // hometext
   var homeTextId = ".article .card-body .hometext";
   $(homeTextId).dblclick(function() { 
@@ -13,7 +18,7 @@ $(function () {
       + '&nbsp;'
       + '<a href="#" class="" title="Cancel" onClick="homeTextCancel(event)"><i class="far fa-times-circle"></i></a>'
       + '</div></div>';
-    var url = ApiNewsDetail + referenceId + '/' + referenceSlug;
+    var url = ApiNewsDetail + referenceId + '/' + referenceSlug + '?preview=1';
     $.ajax({
       type: "GET",
       url: url,
@@ -31,7 +36,7 @@ $(function () {
               element: $(".article .card-body textarea#hometextEditor")[0] 
             });
             homeTextMde.value(homeText);
-            $(homeTextId).fadeOut();        
+            $(homeTextId).hide();        
           }
         }
       }
@@ -47,7 +52,7 @@ $(function () {
       + '&nbsp;'
       + '<a href="#" class="" title="Cancel" onClick="bodyTextCancel(event)"><i class="far fa-times-circle"></i></a>'
       + '</div></div>';
-    var url = ApiNewsDetail + referenceId + '/' + referenceSlug;
+    var url = ApiNewsDetail + referenceId + '/' + referenceSlug + '?preview=1';
     $.ajax({
       type: "GET",
       url: url,
@@ -65,7 +70,7 @@ $(function () {
               element: $(".article .card-body textarea#bodytextEditor")[0] 
             });
             bodyTextMde.value(bodyText);
-            $(bodyTextId).fadeOut();        
+            $(bodyTextId).hide();        
           }
         }
       }

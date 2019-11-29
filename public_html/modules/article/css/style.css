@@ -118,3 +118,7 @@
 .article .card-body .CodeMirror, .CodeMirror-scroll {
 	min-height: 80px !important;
 }
+
+.article .pw-widget {
+  margin: 10px 10px 5px 10px;
+}
