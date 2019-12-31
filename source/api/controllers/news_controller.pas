@@ -117,6 +117,7 @@ end;
 procedure TNewsDetailModule.Get;
 var
   newsIndex: Integer;
+  previewOnly: Boolean;
   newsSlug: String;
 begin
   newsIndex := _GET['$1'].AsInteger;
@@ -125,10 +126,17 @@ begin
   if newsIndex = 0 then
     OutputJson( 404, ERR_INVALID_PARAMETER);
 
+  previewOnly := False;
+  if _GET['preview'] = '1' then
+  begin
+    previewOnly := True;
+    //TODO: check permission to show preview
+  end;
+
   DataBaseInit();
   with TNewsModel.Create() do
   begin
-    if not Detail(newsIndex) then
+    if not Detail(newsIndex, previewOnly) then
     begin
       json['code'] := 404;
       json['msg'] := ERR_DATA_NOT_FOUND;

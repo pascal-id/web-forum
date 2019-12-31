@@ -109,16 +109,17 @@ begin
   Result := TJSONArray.Create;
   if ALimit = 0 then
     ALimit := TOPIC_DEFAULT_LIMIT;
-  fieldList := 'recent_posts.topic_id, topic_title, topic_time, username, recent_posts.forum_id, forum_name, archived';
+  fieldList := 'recent_posts.topic_id, topic_title, post_time_last topic_time, username, recent_posts.forum_id, forum_name, archived, phpbb_posts.poster_id, username';
   selectTopics := 'SELECT ' + fieldList
-    + #10'FROM (SELECT *'
+    + #10'FROM (SELECT max(post_id) post_id_last, topic_id, forum_id, poster_id, max(post_time) post_time_last'
     + #10'FROM phpbb_posts'
     + #10'GROUP BY topic_id'
-    + #10'ORDER BY post_time DESC'
+    + #10'ORDER BY post_time_last DESC'
     + #10'LIMIT 30) as recent_posts'
+    + #10'LEFT JOIN phpbb_posts ON phpbb_posts.post_id=recent_posts.post_id_last'
     + #10'LEFT JOIN phpbb_topics ON phpbb_topics.topic_id=recent_posts.topic_id'
-    + #10'LEFT JOIN users ON users.uid=recent_posts.poster_id'
     + #10'LEFT JOIN phpbb_forums ON phpbb_forums.forum_id=recent_posts.forum_id'
+    + #10'LEFT JOIN users ON users.uid=phpbb_posts.poster_id'
     + #10'WHERE topic_status=0'
     + #10'LIMIT ' + ALimit.ToString
     + ';';

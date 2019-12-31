@@ -153,6 +153,14 @@ begin
   ThemeUtil.AddMeta('og:image', AImage, 'property');
   ThemeUtil.AddMeta('og:site_name', Config['systems/sitename'], 'property');
   ThemeUtil.AddMeta('og:url', AURL, 'property');
+
+  //twitter
+  ThemeUtil.AddMeta('twitter:card', 'summary');
+  ThemeUtil.AddMeta('twitter:title', ATitle);
+  ThemeUtil.AddMeta('twitter:image', AImage);
+  ThemeUtil.AddMeta('twitter:site', Config['systems/sitename']);
+  ThemeUtil.AddMeta('twitter:url', AURL);
+
   Result := True;
 end;
 

@@ -79,9 +79,11 @@ end;
 // POST Method Handler
 procedure TArticleNewController.Post;
 var
+  articleId: Integer;
   token: String;
   title, homeText, bodyText, date, category: String;
   dt: TDateTime;
+  json: TJSONUtil;
 begin
   GetUserSessionInfo;
   SetThemeParameter;
@@ -103,6 +105,7 @@ begin
 
   DataBaseInit;
   QueryExec('SET CHARACTER SET utf8;');
+  articleId := 0;
   with TNewsModel.Create() do
   begin
     if not Add(UserSession.UserName, title, homeText, bodyText, dt) then
@@ -110,11 +113,21 @@ begin
       Free;
       OutputJson(400, ARTICLE_SAVE_ERROR);
     end;
+    articleId := LastInsertID;
     Free;
   end;
 
-  OutputJson(200, OK); //TODO: change to regular json output
-  //Response.Content := '{new}';
+  with TJSONUtil.Create do
+  begin
+    Value['code'] := Int64(200);
+    Value['id'] := articleId;
+    Value['url'] := BaseURL + 'news/' + articleId.ToString + '/'
+      + GenerateSlug(title) + '?preview=1';
+
+    Response.ContentType := 'application/json';
+    Response.Content := AsJSON;
+    Free;
+  end;
 end;
 
 function TArticleNewController.Tag_MainContent_Handler(const TagName: string;
