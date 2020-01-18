@@ -37,7 +37,7 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="routes.pas"/>
+        <Filename Value="routes/forumpascal_routes.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
@@ -137,7 +137,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="controllers;../common;../common/models"/>
+      <OtherUnitFiles Value="controllers;../common;../common/models;routes"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Other>
