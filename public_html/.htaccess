@@ -23,9 +23,13 @@ SetEnvIf Token "(.*)" Token=$1
 RewriteCond %{HTTP_HOST} !^www\.
 RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
 
-RewriteRule ^(search)/(.*)$ search.bin/$2 [QSA,L]
-RewriteRule ^(user)/(.*)/$ auth.bin/$2/ [QSA,L]
-RewriteRule ^(auth)/(.*)$ auth.bin/$2 [QSA,L]
+#RewriteRule ^(search)/(.*)$ search.bin/$2 [QSA,L]
+#RewriteRule ^(user)/(.*)/$ auth.bin/$2/ [QSA,L]
+#RewriteRule ^(auth)/(.*)$ auth.bin/$2 [QSA,L]
+
+RewriteRule ^(.*)/(.*)/(.*)/$ $1.bin/$2/$3 [QSA,L]
+RewriteRule ^(.*)/(.*)/$ $1.bin/$2 [QSA,L]
+RewriteRule ^(.*)/$ $1.bin [QSA,L]
 
 <Files ~ "\.(tpl|txt)$">
   Order deny,allow
@@ -38,5 +42,4 @@ RewriteCond %{REQUEST_FILENAME} -d [OR]
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -l
 RewriteRule ^(.*)$ - [NC,L]
-#RewriteRule ^(.*)$ 404.php [QSA,L]
 RewriteRule ^(.*)$ forumpascal.bin/$1 [QSA,L]

@@ -107,18 +107,19 @@
 
                   <div class="timeline timeline-inverse">
                       
-                      [foreach from=$Activity item=aItem type=jsondata]
-                      <div class="time-label hide"><span class="bg-info">[aItem.time_label filter=defaultempty]</span></div>
-                      <div id="activity-[aItem.id]">
-                        <i><img class="bg-white img-circle img-bordered-sm" src="/themes/PascalIndonesia/images/others/[aItem.post_type].png"></i>
-                        <div class="timeline-item">
-                          <span class="time" title='title time'><i class="far fa-clock"></i></span>
-                          <h3 class="timeline-header">[aItem.prefix] a [aItem.post_type] <a href="[baseurl][aItem.url]">[aItem.title]</a> [aItem.date filter=dateformathuman]</h3>
-                        </div>
+                    <!-- activity -->
+                    [foreach from=$Activity item=aItem type=jsondata]
+                    <div class="time-label hide"><span class="bg-info">[aItem.time_label filter=defaultempty]</span></div>
+                    <div id="activity-[aItem.id]">
+                      <i><img class="bg-white img-circle img-bordered-sm" src="/themes/PascalIndonesia/images/others/[aItem.post_type].png"></i>
+                      <div class="timeline-item">
+                        <span class="time" title='title time'><i class="far fa-clock"></i></span>
+                        <h3 class="timeline-header">[aItem.prefix] a [aItem.post_type] <a href="[baseurl][aItem.url]">[aItem.title]</a> [aItem.date filter=dateformathuman]</h3>
                       </div>
-                      [/foreach from=$Activity]
+                    </div>
+                    [/foreach from=$Activity]
 
-                      <div><i><img class="img-circle img-bordered-sm" src="/profile-image/default.png"></i></div>
+                    <div><i><img class="img-circle img-bordered-sm" src="/profile-image/default.png"></i></div>
                   </div>
 
               </div>
@@ -126,12 +127,14 @@
               <div class="tab-pane" id="interaction">
                 <b>User sent comment(s) in the topic:</b>
                 <ul>
+                  <!-- comment -->
                   [foreach from=$Comments item=aItem type=jsondata]
-                    <li id="[aItem.id]" rel="[aItem.post_type]">
+                    <li id="[aItem.id]">
                       <a href="[baseurl][aItem.url]">[aItem.title]</a> at [aItem.date filter=dateformathuman]
                     </li>
                   [/foreach from=$Comments]
-                  </ul>  
+
+                </ul>  
               </div>
 
               <div class="tab-pane" id="settings">

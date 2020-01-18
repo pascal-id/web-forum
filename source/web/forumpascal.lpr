@@ -4,7 +4,7 @@ program forumpascal;
 
 uses
   {$IFNDEF Windows}cthreads,{$ENDIF}
-  fpcgi, sysutils, fastplaz_handler, common, index_controller, routes,
+  fpcgi, sysutils, fastplaz_handler, common, index_controller, forumpascal_routes,
   thread_controller, common_lib, forum_home_controller, breadcrumb_controller,
   topic_list_controller, category_controller, category_model,
   article_controller, article_detail_controller, user_controller,
