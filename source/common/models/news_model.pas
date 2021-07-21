@@ -64,8 +64,8 @@ begin
   if AFull then
     fieldList := fieldList + ', bodytext';
 
-  AddJoin('categories_mapobj', 'cmo_obj_id', 'nid  AND cmo_reg_id=2', ['cmo_category_id category_id']);
-  AddJoin('categories_category', 'cat_id', 'categories_mapobj.cmo_category_id', ['cat_name category_name']);
+  AddLeftJoin('categories_mapobj', 'cmo_obj_id', 'nid  AND cmo_reg_id=2', ['cmo_category_id category_id']);
+  AddLeftJoin('categories_category', 'cat_id', 'categories_mapobj.cmo_category_id', ['cat_name category_name']);
   Result := Find(['status_id=0', 'published_status=0', 'hideonindex=0', '`from`<"'+Now.AsString+'"'],
     '`from` DESC',
     ALimit, fieldList);
@@ -79,8 +79,8 @@ begin
   if AFull then
     fieldList := fieldList + ', bodytext';
 
-  AddJoin('categories_mapobj', 'cmo_obj_id', 'nid  AND cmo_reg_id=2', ['cmo_category_id category_id']);
-  AddJoin('categories_category', 'cat_id', 'categories_mapobj.cmo_category_id', ['cat_name category_name']);
+  AddLeftJoin('categories_mapobj', 'cmo_obj_id', 'nid  AND cmo_reg_id=2', ['cmo_category_id category_id']);
+  AddLeftJoin('categories_category', 'cat_id', 'categories_mapobj.cmo_category_id', ['cat_name category_name']);
   Result := Find(['status_id=0', 'published_status=0', 'hideonindex=0', '`from`<"'+Now.AsString+'"'],
     'RAND()',
     ALimit, fieldList);
@@ -92,8 +92,8 @@ var
   whereAsArray: TStringArray;
 begin
   fieldList := 'nid, urltitle slug, title, hometext, bodytext, notes, `from` date, unix_timestamp(`from`) timestamp , contributor, counter, obsolete, archived';
-  AddJoin('categories_mapobj', 'cmo_obj_id', 'nid', ['cmo_category_id category_id']);
-  AddJoin('categories_category', 'cat_id', 'categories_mapobj.cmo_category_id', ['cat_name category_name']);
+  AddLeftJoin('categories_mapobj', 'cmo_obj_id', 'nid', ['cmo_category_id category_id']);
+  AddLeftJoin('categories_category', 'cat_id', 'categories_mapobj.cmo_category_id', ['cat_name category_name']);
 
   whereAsArray.Add('nid=' + i2s(ANewsID));
   if not AShowEverything then

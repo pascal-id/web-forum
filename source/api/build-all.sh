@@ -1,5 +1,5 @@
-./build.sh forum
-./build.sh news
-./build.sh stats
-./build.sh topic
-./build.sh auth
+./build.sh forum $1
+./build.sh news $1
+./build.sh stats $1
+./build.sh topic $1
+./build.sh auth $1
