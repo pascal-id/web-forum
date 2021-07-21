@@ -107,6 +107,7 @@ begin
 
   DataBaseInit;
   QueryExec('SET CHARACTER SET utf8;');
+  QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   ThemeUtil.Assign('$Title', 'Article');
   ThemeUtil.AddCSS(BaseURL + 'modules/article/css/style.css');

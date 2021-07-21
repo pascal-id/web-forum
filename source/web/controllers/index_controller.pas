@@ -53,6 +53,7 @@ begin
   Lang := GetLang;
   DataBaseInit();
   QueryExec('SET CHARACTER SET utf8;');
+  QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   ThemeUtil.AddCSS(BaseURL + 'modules/home/css/style.css');
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
