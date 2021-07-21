@@ -1,3 +1,3 @@
-./build.sh auth
-./build.sh forumpascal
-./build.sh search
+./build.sh auth $1
+./build.sh forumpascal $1
+./build.sh search $1

@@ -69,6 +69,7 @@ begin
 
   DataBaseInit();
   QueryExec('SET CHARACTER SET utf8;');
+  QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   if not FCategory.IsExist(categoryId) then
     Redirect('/forum');

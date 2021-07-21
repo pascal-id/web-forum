@@ -82,6 +82,7 @@ begin
 
   DataBaseInit();
   QueryExec('SET CHARACTER SET utf8;');
+  QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   threadAsArray := FTopics.Thread(threadID, Page, FLimit);
   if threadAsArray.Count = 0 then
@@ -153,6 +154,8 @@ begin
 
   DataBaseInit;
   QueryExec('SET CHARACTER SET utf8;');
+  QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
+
   if not FTopics.ReplyThread(topicId, UserSession.UserId, replyMessage) then
   begin
     OutputJson(400, ERR_UNKNOWN);

@@ -79,6 +79,7 @@ begin
 
   DataBaseInit();
   QueryExec('SET CHARACTER SET utf8;');
+  QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   FForum.AddJoin('phpbb_categories', 'cat_id', 'phpbb_forums.cat_id', ['cat_title']);
   if not FForum.FindFirst(['forum_id='+forumId.ToString, 'auth_read=0']) then

@@ -77,6 +77,8 @@ begin
 
   DataBaseInit;
   QueryExec('SET CHARACTER SET utf8mb4;');
+  QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
+
   if not FNews.Detail(articleId, previewOnly) then
     Redirect('/news/');
 

@@ -124,6 +124,9 @@ function ObsoloteSubmit(el){
 
 }
 
+// docCookies
+// docCookies.setItem('token', '[token]', null, '/');
+// localToken = docCookies.getItem('token');
 docCookies = {
   getItem: function (sKey) {
     if (!sKey || !this.hasItem(sKey)) { return null; }

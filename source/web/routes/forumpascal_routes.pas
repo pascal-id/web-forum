@@ -30,7 +30,7 @@ initialization
   Route[ '/news/'] := TArticleController;
   Route[ '/profile/(.*)'] := TProfileController;
   Route[ '/user'] := TUserController;
-  Route['/obsolete/'] := TObsoleteController;
+  Route[ '/obsolete/'] := TObsoleteController;
   Route[ '/'] := TIndexController; // Main Module
 
 end.
