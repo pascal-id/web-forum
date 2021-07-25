@@ -71,6 +71,8 @@ begin
     Redirect('/', 'User not found');
 
   userId := FUser['uid'];
+  if userId = -1 then
+    Redirect('/');
   regDateAsInteger := FUser['regdate'];
   lastVisitAsInteger := FUser['lastvisit']; //TODO: get from session
   ThemeUtil.Assign('$UserName', FUser['username']);
