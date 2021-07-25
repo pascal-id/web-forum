@@ -143,9 +143,9 @@ end;
 
 function TUserModel.FindByUserName(const AUserName: String): Boolean;
 begin
-  Result := FindFirst(['username="'+AUserName+'"', 'activated=0'], '',
+  Result := FindFirst(['`username`="'+AUserName+'"', '`activated`=0'], '',
     'uid, username, email, md5(email) gravatar, regdate, storynum, lastvisit, from_unixtime(lastvisit) lastvisit_date,'
-    + 'post_count, signature, level, rank, user_from');
+    + 'post_count, signature, `level`, `rank`, user_from');
 end;
 
 function TUserModel.FindByEmail(const AEmail: String): Boolean;
