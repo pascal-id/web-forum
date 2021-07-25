@@ -1,7 +1,8 @@
 #!/bin/bash
 if [ -n "$1" ]; then
   PROJECTBASE=$1
-  PROJECTFILE=$1.lpr
+  PROJECTBASE="${PROJECTBASE//.lp/}"
+  PROJECTFILE=$PROJECTBASE.lpr
   echo "Project: "$PROJECTBASE
 else
   echo "USAGE:"
@@ -19,6 +20,7 @@ if [ ! -d lib ]; then
     mkdir lib
 fi
 
-fpc $PROJECTFILE -o../../public_html/api/$PROJECTBASE.bin @extra.cfg
+fpc $PROJECTFILE @extra.cfg -o../../public_html/api/$PROJECTBASE.bin $2
 
 echo Done.... $1
+echo
