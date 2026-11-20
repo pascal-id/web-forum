@@ -46,7 +46,7 @@ type
 
 implementation
 
-uses json_helpers, topic_post_model;
+uses json_helpers, topic_post_model, html_sanitizer_lib, datetime_lib;
 
 constructor TTopicModel.Create(const DefaultTableName: string = '');
 begin
@@ -181,6 +181,7 @@ function TTopicModel.Thread(ATopicID: integer; APage: integer;
 var
   i, indexField, offsetThread: integer;
   s, selectThread: string;
+  postDate: TDateTime;
 begin
   Result := TJSONArray.Create;
   AddJoin('phpbb_forums', 'forum_id', 'phpbb_topics.forum_id', ['cat_id', 'forum_name']);
@@ -222,7 +223,8 @@ begin
   Data.Open;
   DataToJSON(Data, Result, False);
 
-  // reformat body text
+  // reformat body text: BBCode + markdown -> HTML, lalu disanitasi
+  // (post_text adalah konten user; dipakai web thread & API thread)
   for i := 0 to Result.Count - 1 do
   begin
     indexField := Result.Items[i].IndexOfName('post_text');
@@ -234,7 +236,20 @@ begin
         //s := s.Replace('\"', '"');
         //s := s.Replace('\r\n', #10);
         s := s.Replace(#10#10, #10);
-        Result.Items[i].Items[indexField].AsString := s;
+        s := MarkdownToHTML(s);
+      except
+      end;
+      Result.Items[i].Items[indexField].AsString := SafeHTML(s);
+    end;
+
+    // tanggal siap tampil (foreach jsondata tidak punya dateformat=human)
+    indexField := Result.Items[i].IndexOfName('post_time');
+    if indexField <> -1 then
+    begin
+      try
+        postDate := UnixToDateTime(Result.Items[i].Items[indexField].AsInt64, False);
+        TJSONObject(Result.Items[i]).Add('post_date', FormatDateTime('yyyy/mm/dd', postDate));
+        TJSONObject(Result.Items[i]).Add('post_human', DateTimeHuman(postDate));
       except
       end;
     end;

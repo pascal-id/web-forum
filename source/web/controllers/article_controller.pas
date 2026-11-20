@@ -116,7 +116,7 @@ begin
   // Open Graph
   SetOpenGraph('Article',
     GetOpenGraphImage('', BaseURL + ARTICLE_DEFAULT_OGIMAGE),
-    BaseURL + 'news/');
+    BaseURL + 'news/', '', 'website', False, False);
 
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
   Response.Content := ThemeUtil.Render();

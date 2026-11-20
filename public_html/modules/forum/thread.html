@@ -52,13 +52,13 @@
           <div class="card-body">
             <div class="timeline timeline-inverse">
               <div class="time-label"></div>
-              [foreach from=$Threads item=aItem type=table]
+              [foreach from=$Threads item=aItem type=jsondata]
               <div id="post-[aItem.post_id]">
                 <i class="user-photo-small"><a href="/profile/[aItem.username]"><img class="img-circle img-bordered-sm" src="[baseurl]profile-image/[aItem.gravatar].jpg" alt="user image" onerror="this.onerror=null; this.src='/profile-image/default.png';"></a></i>
                 <div class="timeline-item">
-                  <span class="time" title='[aItem.post_time dateformat="yyyy/mm/dd"]'><i class="far fa-clock"></i> [aItem.post_time dateformat=human]</span>
+                  <span class="time" title="[aItem.post_date]"><i class="far fa-clock"></i> [aItem.post_human]</span>
                   <h3 class="timeline-header"><a href="/profile/[aItem.username]">[aItem.username]</a></h3>
-                  <div class="timeline-body">[aItem.post_text filter=multifilter]</div>
+                  <div class="timeline-body">[aItem.post_text]</div>
                 </div>
               </div>
               [/foreach from=$Threads]

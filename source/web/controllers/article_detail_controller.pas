@@ -33,7 +33,7 @@ type
 
 implementation
 
-uses theme_controller, common, common_lib, RegExpr;
+uses theme_controller, common, common_lib, RegExpr, html_sanitizer_lib;
 
 const
   INLINE_CODE_MARK = #1;
@@ -446,6 +446,8 @@ begin
 
   ThemeUtil.Assign('$Date', dt.HumanReadable);
   ThemeUtil.Assign('$ArticleUrl', BaseURL + 'news/' + articleId.ToString + '/' + String(FNews['slug']));
+  // SetOpenGraph runs inside the maincontent handler, after <head> is rendered
+  SetCanonical(BaseURL + 'news/' + articleId.ToString + '/' + String(FNews['slug']));
 
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
   //ThemeUtil.TrimWhiteSpace := False;
@@ -467,6 +469,11 @@ begin
   if UserSession.IsExpired then
   begin
     OutputJson(404, ERR_NOT_PERMITTED);
+    Exit;
+  end;
+  if not IsValidCSRFToken then
+  begin
+    OutputJson(403, ERR_CSRF_INVALID);
     Exit;
   end;
 
@@ -525,8 +532,9 @@ function TArticleDetailController.Tag_MainContent_Handler(const TagName: string;
 var
   homeText, bodyText, ogImage, ogDefaultImage, ogDescription: string;
 begin
-  homeText := ArticleContentToHTML(FNews['hometext']);
-  bodyText := ArticleContentToHTML(FNews['bodytext']);
+  // konten artikel buatan user: sanitasi HTML hasil render (anti XSS)
+  homeText := SafeHTML(ArticleContentToHTML(FNews['hometext']));
+  bodyText := SafeHTML(ArticleContentToHTML(FNews['bodytext']));
   ThemeUtil.Assign('$HomeText', homeText);
   ThemeUtil.Assign('$BodyText', bodyText);
   ThemeUtil.AssignVar['$Article'] := @FNews.Data;

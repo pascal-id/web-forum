@@ -56,6 +56,12 @@ end;
 // POST Method Handler
 procedure TAuthLogoutController.Post;
 begin
+  // cegah logout paksa dari situs lain (CSRF)
+  if GetUserSessionInfo and (not IsValidCSRFToken) then
+  begin
+    OutputJson(403, ERR_CSRF_INVALID);
+    Exit;
+  end;
   ResetSession;
   OutputJson(200, OK);
 end;

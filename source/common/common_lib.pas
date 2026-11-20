@@ -36,8 +36,12 @@ function ReplaceFromLegacy(AContent: string): string;
 
 function GetOpenGraphDescription(AContent: string; AMaxLength: integer = 200): string;
 function SetOpenGraph(ATitle, AImage, AURL: string; ADescription: string = '';
-  AType: string = 'website'; ALargeImage: boolean = False): boolean;
+  AType: string = 'website'; ALargeImage: boolean = False;
+  ACanonical: boolean = True): boolean;
+procedure SetCanonical(AURL: string);
 function GetUserSessionInfo: boolean;
+function GetCSRFToken: string;
+function IsValidCSRFToken: boolean;
 procedure SetThemeParameter;
 procedure ResetSession;
 
@@ -200,9 +204,18 @@ begin
     'https://pascal-id.org/syntax');
 end;
 
+// Rendered by [$CanonicalTag filter=defaultempty] in master.html, so it must
+// be called BEFORE ThemeUtil.Render(); a call from inside the maincontent tag
+// handler is too late because <head> is already rendered by then.
+procedure SetCanonical(AURL: string);
+begin
+  ThemeUtil.Assign('$CanonicalTag',
+    '<link rel="canonical" href="' + HTMLEncode(AURL) + '" />');
+end;
+
 // AddMeta writes the content as-is, so every value is HTML-encoded here
 function SetOpenGraph(ATitle, AImage, AURL: string; ADescription: string;
-  AType: string; ALargeImage: boolean): boolean;
+  AType: string; ALargeImage: boolean; ACanonical: boolean): boolean;
 var
   title, image, url, description: string;
 begin
@@ -218,6 +231,9 @@ begin
   ThemeUtil.AddMeta('og:image', image, 'property');
   ThemeUtil.AddMeta('og:site_name', HTMLEncode(Config['systems/sitename']), 'property');
   ThemeUtil.AddMeta('og:url', url, 'property');
+  // list pages pass ACanonical=False because their og:url drops ?page=
+  if ACanonical then
+    SetCanonical(AURL);
   if description <> '' then
     ThemeUtil.AddMeta('description', description);
 
@@ -257,6 +273,48 @@ begin
   Result := not UserSession.IsExpired;
 end;
 
+// token CSRF per session, dibuat saat pertama dibutuhkan (hanya untuk user login)
+function GetCSRFToken: string;
+var
+  g1, g2: TGUID;
+begin
+  Result := _SESSION[CSRF_SESSION_KEY];
+  if Length(Result) >= 32 then
+    Exit;
+  CreateGUID(g1);
+  CreateGUID(g2);
+  Result := LowerCase(StringReplace(GUIDToString(g1) + GUIDToString(g2),
+    '-', '', [rfReplaceAll]));
+  Result := StringReplace(StringReplace(Result, '{', '', [rfReplaceAll]),
+    '}', '', [rfReplaceAll]);
+  _SESSION[CSRF_SESSION_KEY] := Result;
+end;
+
+// header X-CSRF-Token harus sama dengan token di session
+function IsValidCSRFToken: boolean;
+var
+  sessionToken, requestToken: string;
+  i: integer;
+  diff: byte;
+begin
+  Result := False;
+  sessionToken := _SESSION[CSRF_SESSION_KEY];
+  requestToken := '';
+  try
+    requestToken := Application.Request.GetCustomHeader(CSRF_HEADER);
+  except
+  end;
+  if requestToken = '' then
+    requestToken := GetEnvironmentVariable('HTTP_X_CSRF_TOKEN'); // CGI
+  requestToken := Trim(requestToken);
+  if (Length(sessionToken) < 32) or (Length(requestToken) <> Length(sessionToken)) then
+    Exit;
+  diff := 0;
+  for i := 1 to Length(sessionToken) do
+    diff := diff or (Ord(sessionToken[i]) xor Ord(requestToken[i]));
+  Result := diff = 0;
+end;
+
 procedure SetThemeParameter;
 begin
   ThemeUtil.Assign(TAG_USER_CAN_EDIT, '1');
@@ -269,6 +327,13 @@ begin
   ThemeUtil.Assign(TAG_USERNAME, UserSession.UserName);
   ThemeUtil.Assign(TAG_GRAVATAR, UserSession.Gravatar);
   ThemeUtil.Assign(TAG_IP_ADDRESS, UserSession.IPAddress);
+
+  // token hanya dibuat untuk user login (semua aksi POST/PUT butuh login),
+  // agar pengunjung anonim/crawler tidak membuat session baru
+  if UserSession.IsExpired then
+    ThemeUtil.Assign(TAG_CSRF_TOKEN, '')
+  else
+    ThemeUtil.Assign(TAG_CSRF_TOKEN, GetCSRFToken);
 end;
 
 procedure ResetSession;

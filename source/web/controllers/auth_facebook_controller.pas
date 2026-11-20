@@ -7,8 +7,10 @@ unit auth_facebook_controller;
 
   [x] Facebook Login
   curl -X POST "http://www.pascal-id.test/auth/facebook/" \
-    -H 'Token:[token]' \
-    -d '{"first_name":"Luri","last_name":"Darmawan","email":"luri@kioss.com","name":"Luri Darmawan","id":"10218042891638356"}'
+    -H 'Token:[token]'
+
+  Token diverifikasi ke Graph API (lihat common/facebook_lib.pas);
+  id/nama/email diambil dari Facebook, request body tidak dipakai.
 
 }
 
@@ -37,7 +39,7 @@ type
 implementation
 
 uses theme_controller, common, common_lib, auth_token_model, auth_user_model,
-  user_model;
+  user_model, facebook_lib;
 
 constructor TAuthFacebookController.CreateNew(AOwner: TComponent; CreateMode: integer);
 begin
@@ -64,9 +66,9 @@ var
   tokenElapsed: integer;
 begin
   FacebookToken := Header['Token'];
-  if FacebookToken.IsEmpty then
+  if not IsValidTokenFormat(FacebookToken) then
   begin
-    OutputJson(400, ERR_INVALID_PARAMETER);
+    OutputJson(400, ERR_AUTH_INVALID_TOKEN);
     Exit;
   end;
 
@@ -103,45 +105,50 @@ begin
 end;
 
 // POST Method Handler
+// Identitas user (id, nama, email) diambil dari Graph API memakai token,
+// BUKAN dari request body; body dari browser diabaikan.
 procedure TAuthFacebookController.Post;
 var
-  tokenElapsedTime: integer;
-  facebookId, userName, userGravatar: String;
+  userName, userGravatar: String;
   userId: integer;
-  json, requestAsJson: TJSONUtil;
+  json: TJSONUtil;
+  profile: TFacebookProfile;
 begin
   FacebookToken := Header['Token'];
-  if FacebookToken.IsEmpty then
+  if not IsValidTokenFormat(FacebookToken) then
   begin
-    OutputJson(400, ERR_INVALID_PARAMETER);
+    OutputJson(400, ERR_AUTH_INVALID_TOKEN);
     Exit;
   end;
-  requestAsJson := TJSONUtil.Create;
-  requestAsJson.LoadFromJsonString(Request.Content);
 
-  if requestAsJson['email'] = '' then
+  if not FacebookVerifyToken(FacebookToken, profile) then
   begin
-    requestAsJson.Free;
+    OutputJson(401, ERR_AUTH_INVALID_TOKEN);
+    Exit;
+  end;
+
+  if profile.Email = '' then
+  begin
     OutputJson(400, ERR_AUTH_EMAIL_REQUIRED);
     Exit;
   end;
 
   DataBaseInit();
-  json := TJSONUtil.Create;
-  json['code'] := 400;
+  userId := 0;
+  userName := '';
+  userGravatar := '';
   with TAuthUserModel.Create() do
   begin
-    if FindByEmail(requestAsJson['email']) then
+    if FindByEmail(profile.Email) then
     begin
       userId := Value['auid'];
       userName := Value['username'];
       userGravatar := Value['gravatar'];
-      facebookId := requestAsJson['id'];
-      if not isMappingExist(userId, facebookId) then
+      if not isMappingExist(userId, profile.Id) then
       begin
         with TUserModel.Create() do
         begin
-          AddMapping(1, userId, facebookId, requestAsJson['email']);
+          AddMapping(1, userId, profile.Id, profile.Email);
           Free;
         end;
       end;
@@ -151,10 +158,12 @@ begin
       // Add User From Facebook Data
       with TUserModel.Create() do
       begin
-        AddFromFacebook(requestAsJson['id'], requestAsJson['first_name'],
-          requestAsJson['last_name'], requestAsJson['email']);
-        userId := LastInsertID;
-        userName := CurrentUserName;
+        if AddFromFacebook(StrToInt64(profile.Id), profile.FirstName,
+          profile.LastName, profile.Email) then
+        begin
+          userId := NewUserId;
+          userName := CurrentUserName;
+        end;
         Free;
       end;
     end;
@@ -162,7 +171,15 @@ begin
     Free;
   end;
 
+  if userId <= 0 then
+  begin
+    OutputJson(400, ERR_UNKNOWN);
+    Exit;
+  end;
+
   // simpan token ke DB
+  json := TJSONUtil.Create;
+  json['code'] := 400;
   with TAuthTokenModel.Create() do
   begin
     if AddToken(FacebookToken, userId) then
@@ -192,4 +209,3 @@ end;
 
 
 end.
-

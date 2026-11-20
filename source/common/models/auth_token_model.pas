@@ -54,7 +54,8 @@ function TAuthTokenModel.IsValid(AToken: string): boolean;
 begin
   Result := False;
   AddJoin('auth_users', 'auid', 'user_id',['username', 'email']);
-  if Find(['status_id=0', 'token="' + AToken + '"',
+  // AToken bisa berasal dari header (tidak di-escape oleh FastPlaz)
+  if Find(['status_id=0', 'token="' + mysql_real_escape_string(AToken) + '"',
     'expired_date > "'+Now.AsString+'"'],
     'expired_date DESC',
     1,
