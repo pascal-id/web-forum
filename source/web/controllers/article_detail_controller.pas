@@ -177,6 +177,8 @@ begin
       Result := StringReplace(Result,
         INLINE_CODE_MARK + IntToStr(i) + INLINE_CODE_MARK,
         '<code>' + EscapeHTML(codes[i]) + '</code>', [rfReplaceAll]);
+    // MarkdownToHTML adds a space after </b>: "<b>x</b> ." -> "<b>x</b>."
+    Result := ReplaceRegExpr('(</b>|</i>) +([\.,;:!\?\)])', Result, '$1$2', True);
     Result := Trim(Result);
   finally
     re.Free;
@@ -328,6 +330,13 @@ begin
       Inc(i);
     end;
     FlushAll;
+
+    // block elements have their own spacing: drop <br /> around them
+    Result := ReplaceRegExpr('(<br />\s*)+(<(h[1-6]|ul|ol|pre|blockquote|hr)[\s>/])',
+      Result, '$2', True);
+    Result := ReplaceRegExpr('(</(h[1-6]|ul|ol|pre|blockquote)>|<hr />)\s*(<br />\s*)+',
+      Result, '$1'#10, True);
+    Result := ReplaceRegExpr('(<br />\s*)+$', Result, '', True);
   finally
     reQuote.Free;
     reOrdered.Free;
@@ -352,6 +361,8 @@ begin
   Result := ReplaceRegExpr('(?i)<br\s*/?>[ \t]*\n', Result, #10, False);
   Result := ReplaceRegExpr('(?i)<br\s*/?>', Result, #10, False);
   Result := MarkdownContentToHTML(Result);
+  if Result <> '' then
+    Result := '<div class="md-content">' + Result + '</div>';
 end;
 
 constructor TArticleDetailController.CreateNew(AOwner: TComponent; CreateMode: integer);
