@@ -47,7 +47,7 @@ type
 
 implementation
 
-uses common_lib;
+uses common_lib, RegExpr, StrUtils;
 
 function TUserModel.getArticleCount: Integer;
 var
@@ -294,7 +294,11 @@ begin
   // escape di setiap tempat yang digabung ke SQL, Value[] memakai parameter
   Result := False;
   FNewUserId := 0;
-  FCurrentUserName := AFirstName + ALastName;
+  // username tampil mentah di template/JS dan dipakai di URL /profile/<nama>
+  FCurrentUserName := DelChars(AFirstName + ALastName, ' ');
+  FCurrentUserName := ReplaceRegExpr('[<>"''&\\/\[\]`]', FCurrentUserName, '', False);
+  if FCurrentUserName = '' then
+    FCurrentUserName := 'user';
   authUserId := AExistingUserID;
   if AExistingUserID = 0 then
   begin

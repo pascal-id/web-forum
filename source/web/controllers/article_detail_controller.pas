@@ -33,7 +33,7 @@ type
 
 implementation
 
-uses theme_controller, common, common_lib, RegExpr;
+uses theme_controller, common, common_lib, RegExpr, html_sanitizer_lib;
 
 const
   INLINE_CODE_MARK = #1;
@@ -525,8 +525,9 @@ function TArticleDetailController.Tag_MainContent_Handler(const TagName: string;
 var
   homeText, bodyText, ogImage, ogDefaultImage, ogDescription: string;
 begin
-  homeText := ArticleContentToHTML(FNews['hometext']);
-  bodyText := ArticleContentToHTML(FNews['bodytext']);
+  // konten artikel buatan user: sanitasi HTML hasil render (anti XSS)
+  homeText := SafeHTML(ArticleContentToHTML(FNews['hometext']));
+  bodyText := SafeHTML(ArticleContentToHTML(FNews['bodytext']));
   ThemeUtil.Assign('$HomeText', homeText);
   ThemeUtil.Assign('$BodyText', bodyText);
   ThemeUtil.AssignVar['$Article'] := @FNews.Data;

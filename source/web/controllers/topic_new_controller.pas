@@ -29,7 +29,7 @@ type
 
 implementation
 
-uses theme_controller, common, common_lib;
+uses theme_controller, common, common_lib, html_sanitizer_lib;
 
 constructor TTopicNewController.CreateNew(AOwner: TComponent;
   CreateMode: integer);
@@ -104,7 +104,12 @@ var
   json: TJSONUtil;
 begin
   Response.ContentType := 'application/json';
-  GetUserSessionInfo;
+  // wajib login
+  if not GetUserSessionInfo then
+  begin
+    OutputJson(401, ERR_NOT_PERMITTED);
+    Exit;
+  end;
   SetThemeParameter;
 
   FForumId := _GET['$1'].ToInteger;
@@ -114,7 +119,7 @@ begin
     Exit;
   end;
 
-  topicTitle := _POST['title'];
+  topicTitle := CleanTitle(_POST['title']);
   topicMessage := UrlDecode(_POST['message']);
   if topicTitle.IsEmpty or topicMessage.IsEmpty then
   begin
@@ -124,6 +129,15 @@ begin
 
   DataBaseInit();
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
+
+  // forum harus ada, aktif (tidak dikunci) dan boleh di-post member biasa
+  // (phpBB auth_post: 0 = semua, 1 = member terdaftar, >1 = moderator/admin)
+  if not FForum.FindFirst(['forum_id=' + FForumId.ToString, 'auth_read=0',
+    'forum_status=0', 'auth_post<=1']) then
+  begin
+    OutputJson(403, ERR_NOT_PERMITTED);
+    Exit;
+  end;
 
   if not FTopics.Add(UserSession.UserId, FForumId, topicTitle, topicMessage) then
   begin

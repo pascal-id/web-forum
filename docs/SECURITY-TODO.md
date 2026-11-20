@@ -52,17 +52,33 @@ Catatan konteks:
   `web/controllers/article_new_controller.pas`, `web/controllers/article_detail_controller.pas`,
   template `modules/forum/thread.html` (`filter=multifilter`), `modules/user/profile.html`.
 - Masalah: konten disimpan setelah `UrlDecode` dan ditampilkan sebagai HTML tanpa escaping/sanitizer.
-- [ ] Escape HTML konten user sebelum BBCode/markdown di-render (atau sanitizer whitelist tag).
-- [ ] Tolak skema `javascript:` / `data:` di `[url=...]`, `[img]`, link markdown.
+- Implementasi: `source/common/html_sanitizer_lib.pas` (`SafeHTML`, whitelist tag/atribut).
+- [x] Sanitasi HTML hasil render BBCode/markdown (whitelist tag & atribut, buang `on*`,
+      `<script>/<iframe>/<svg>/...`, style berbahaya).
+- [x] Tolak skema selain `http/https/mailto/ftp` di `href`/`src` (termasuk yang di-encode entity).
+- [x] Post thread: `TTopicModel.Thread` (dipakai halaman thread **dan** `api/topic/thread`);
+      template `thread.html` kini memakai data JSON yang sudah disanitasi (bukan `filter=multifilter`).
+- [x] Artikel: `$HomeText` / `$BodyText` di `article_detail_controller.pas`.
+- [x] Signature profil (`profile_controller.pas`, `profile.html`).
+- [x] `[` / `]` di konten di-escape agar tidak diproses ulang sebagai tag template FastPlaz.
+- [x] Judul topik/artikel/obsolete baru: `< > "` di-encode saat disimpan (`CleanTitle`).
+- [x] Username baru dari Facebook: karakter `<>"'&\/[]` dan spasi dibuang.
+- [ ] Tes visual konten lama (BBCode/HTML legacy) di halaman thread & artikel — dev server
+      belum bisa (DB error: library MySQL tidak ter-load).
+- [ ] Catatan: atribut `onerror` bawaan `[img]` (sembunyikan gambar rusak) ikut terbuang.
 
 ### 5. Membuat artikel / topik tanpa login
-- [ ] `web/controllers/article_new_controller.pas` (`Post`): wajib login.
-- [ ] `web/controllers/topic_new_controller.pas` (`Post`): wajib login (`UserSession.IsExpired`).
-- [ ] Cek forum boleh di-post (`auth_post`), bukan hanya `auth_read`.
+- [x] `web/controllers/article_new_controller.pas` (`Post`): wajib login (401).
+- [x] `web/controllers/topic_new_controller.pas` (`Post`): wajib login (401).
+- [x] Forum harus `auth_read=0`, `forum_status=0`, `auth_post<=1` (403).
+- [ ] Reply (`thread_controller.pas` `Post`) belum mengecek topik ada / tidak dikunci / forumnya boleh reply.
 
 ### 6. Reflected XSS di halaman search
-- [ ] `web/controllers/search_controller.pas`: `HTMLEncode` untuk `$Query` dan `$Title`.
-- [ ] Cek nilai lain yang di-`Assign` dari input user / DB (`$Title` di thread, profile, dll).
+- [x] `web/controllers/search_controller.pas`: `$Query` dan `$Title` di-encode HTML
+      (terverifikasi di dev: `"><script>` kini keluar sebagai `&quot;&gt;&lt;script&gt;`).
+- [x] `modules/search/js/search.js`: keyword & riwayat pencarian di-escape sebelum `.html()`.
+- [ ] Cek nilai lain yang di-`Assign` dari input user / DB (`$Title` di thread, profile, dll) —
+      judul lama dari DB sudah ter-encode (phpBB), judul baru via `CleanTitle`.
 
 ## 🟡 Sedang
 

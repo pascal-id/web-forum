@@ -6,6 +6,16 @@ let TopicSearchHaveResult = false;
 let SearchHistory = [];
 const SEARCH_HISTORY_KEY = 'search';
 
+// escape teks sebelum dimasukkan ke HTML (keyword berasal dari URL / input user)
+function EscapeSearchText(AText){
+  return String(AText)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 $(function () {
 
   'use strict'
@@ -90,7 +100,7 @@ function Search(AKeyword){
   NewsSearch(AKeyword);
   TopicSearch(AKeyword);
 
-  let newURL = BaseURL + 'search/?q='+AKeyword;
+  let newURL = BaseURL + 'search/?q='+encodeURIComponent(AKeyword);
   history.pushState(null, null, newURL);
 }
 
@@ -150,7 +160,7 @@ function TopicSearch(AKeyword){
           if (!NewsSearchHaveResult){
             $('#highlight').addClass('hide');
             $('.help-block').removeClass('hide');
-            $('.help-block').html('Informasi tentang "'+AKeyword+'" tidak ditemukan');
+            $('.help-block').html('Informasi tentang "'+EscapeSearchText(AKeyword)+'" tidak ditemukan');
             
           }
         }else{
@@ -181,7 +191,7 @@ function SearchHistoryView(){
       break;
     index = (SearchHistory.length - i) - 1;
     html += '<li><a href="#" class="search-history" onClick="PlaceToSearch(this);">';
-    html += SearchHistory[index];
+    html += EscapeSearchText(SearchHistory[index]);
     html += "</a></li>";
   }
   html += "</ul>";

@@ -24,7 +24,7 @@ type
 
 implementation
 
-uses theme_controller, common, common_lib, news_model;
+uses theme_controller, common, common_lib, news_model, html_sanitizer_lib;
 
 constructor TArticleNewController.CreateNew(AOwner: TComponent;
   CreateMode: integer);
@@ -81,19 +81,19 @@ end;
 procedure TArticleNewController.Post;
 var
   articleId: Integer;
-  token: String;
   title, homeText, bodyText, date, category: String;
   dt: TDateTime;
   json: TJSONUtil;
 begin
-  GetUserSessionInfo;
+  // wajib login (sebelumnya siapa pun bisa membuat artikel)
+  if not GetUserSessionInfo then
+  begin
+    OutputJson(401, ERR_NOT_PERMITTED);
+    Exit;
+  end;
   SetThemeParameter;
 
-  token := Header['token'];
-  //if token.IsEmpty then
-  //  OutputJson(500, ERR_NOT_PERMITTED);
-
-  title := _POST['title'];
+  title := CleanTitle(_POST['title']);
   date := _POST['date'];
 
   dt := ScanDateTime('DD-MM-YYYY hh:nn', date);

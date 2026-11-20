@@ -27,7 +27,7 @@ type
 
 implementation
 
-uses theme_controller, common, common_lib, obsolete_model;
+uses theme_controller, common, common_lib, obsolete_model, html_sanitizer_lib;
 
 constructor TObsoleteController.CreateNew(AOwner: TComponent; CreateMode: integer);
 begin
@@ -88,7 +88,7 @@ begin
     Value['module'] := moduleName;
     Value['user_id'] := UserSession.UserId;
     Value['ref_id'] := referenceId;
-    Value['title'] := _POST['title'];
+    Value['title'] := CleanTitle(_POST['title']);
     Value['description'] := description;
     Value['status_id'] := 2;
     // a failed Save returns False (FastPlaz no longer stops the request)

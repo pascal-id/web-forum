@@ -27,6 +27,8 @@ type
     FLimit: integer;
     FTopics: TTopicModel;
     FBreadCrumb: TBreadCrumb;
+    // post sudah dirender & disanitasi oleh TTopicModel.Thread
+    FThreadAsArray: TJSONArray;
     function Tag_MainContent_Handler(const TagName: string;
       Params: TStringList): string;
     procedure BeforeRequestHandler(Sender: TObject; ARequest: TRequest);
@@ -49,6 +51,7 @@ begin
   BeforeRequest := @BeforeRequestHandler;
   FTopics := TTopicModel.Create();
   FBreadCrumb := TBreadCrumb.Create;
+  FThreadAsArray := nil;
   Page := 1;
 end;
 
@@ -56,6 +59,8 @@ destructor TThreadController.Destroy;
 begin
   FBreadCrumb.Free;
   FTopics.Free;
+  if Assigned(FThreadAsArray) then
+    FThreadAsArray.Free;
   inherited Destroy;
 end;
 
@@ -69,7 +74,6 @@ procedure TThreadController.Get;
 var
   threadID: integer;
   ogURL, threadURL, s: string;
-  threadAsArray: TJSONArray;
   threadPostTime: Integer;
 begin
   GetUserSessionInfo;
@@ -83,8 +87,8 @@ begin
   DataBaseInit();
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
-  threadAsArray := FTopics.Thread(threadID, Page, FLimit);
-  if threadAsArray.Count = 0 then
+  FThreadAsArray := FTopics.Thread(threadID, Page, FLimit);
+  if FThreadAsArray.Count = 0 then
   begin
     Redirect('/forum/', 'Topic not Found');
     Exit;
@@ -178,7 +182,7 @@ end;
 function TThreadController.Tag_MainContent_Handler(const TagName: string;
   Params: TStringList): string;
 begin
-  ThemeUtil.AssignVar['$Threads'] := @FTopics.Data;
+  ThemeUtil.AssignVar['$Threads'] := @FThreadAsArray;
   Result := ThemeUtil.RenderFromContent(nil, '', 'modules/forum/thread.html');
   Result := ReplaceFromLegacy(Result);
   Result := Result.Replace('\''', '''');

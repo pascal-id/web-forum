@@ -26,7 +26,7 @@ type
 
 implementation
 
-uses theme_controller, common, common_lib;
+uses theme_controller, common, common_lib, html_sanitizer_lib;
 
 constructor TSearchController.CreateNew(AOwner: TComponent; CreateMode: integer);
 begin
@@ -51,10 +51,13 @@ procedure TSearchController.Get;
 var
   query: String;
 begin
-  query := _GET['q'];
+  // _GET hanya di-escape untuk SQL (backslash), bukan untuk HTML; di sini
+  // tidak ada query SQL, jadi pakai nilai mentah lalu encode HTML
+  // (dipakai di value="..." dan <title>)
+  query := EscapeHTMLText(Trim(Request.QueryFields.Values['q']));
   ThemeUtil.Assign('$Query', query);
 
-  ThemeUtil.Assign('$Title', 'Search '+query);
+  ThemeUtil.Assign('$Title', 'Search ' + query);
 
   SetOpenGraph('Search', BaseURL + SEARCH_DEFAULT_OGIMAGE, BaseURL + 'search/');
 
