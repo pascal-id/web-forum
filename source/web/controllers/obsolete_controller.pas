@@ -63,6 +63,11 @@ begin
     OutputJson(400, ERR_NOT_PERMITTED);
     Exit;
   end;
+  if not IsValidCSRFToken then
+  begin
+    OutputJson(403, ERR_CSRF_INVALID);
+    Exit;
+  end;
 
   moduleName := _POST['module'];
   referenceId := _POST['id'].ToInteger;

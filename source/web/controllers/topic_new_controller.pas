@@ -110,6 +110,11 @@ begin
     OutputJson(401, ERR_NOT_PERMITTED);
     Exit;
   end;
+  if not IsValidCSRFToken then
+  begin
+    OutputJson(403, ERR_CSRF_INVALID);
+    Exit;
+  end;
   SetThemeParameter;
 
   FForumId := _GET['$1'].ToInteger;

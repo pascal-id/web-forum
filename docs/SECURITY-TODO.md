@@ -82,9 +82,16 @@ Catatan konteks:
 
 ## 🟡 Sedang
 
-- [ ] 7. Draft artikel bisa dilihat siapa saja via `?preview=1`
-      (`article_detail_controller.pas`, `TODO: check permission`) → batasi ke kontributor/admin.
-- [ ] 8. Tidak ada CSRF token di POST/PUT (reply, topik baru, edit artikel, obsolete, logout).
+- [-] 7. Draft artikel bisa dilihat siapa saja via `?preview=1`
+      (`article_detail_controller.pas`, `TODO: check permission`). **Diabaikan** (keputusan owner).
+- [x] 8. CSRF token di POST/PUT (reply, topik baru, artikel baru, edit artikel, obsolete, logout).
+      - Cookie session FastPlaz sudah `HttpOnly` + `SameSite=Lax`; token ini lapisan kedua
+        (browser lama, subdomain yang dianggap same-site).
+      - Token per session (`common_lib.GetCSRFToken`), hanya dibuat untuk user login,
+        ditaruh di `<meta name="csrf-token">` (`master.html`, `home.html`).
+      - `app.js` mengirim header `X-CSRF-Token` otomatis untuk ajax non-GET ke situs sendiri.
+      - Server: `IsValidCSRFToken` → 403 bila tidak cocok.
+      - [ ] Tes manual setelah login: reply, topik baru, artikel baru/edit, report obsolete, logout.
 - [ ] 9. Second-order SQLi: username dari DB digabung ke SQL (`user_model.pas` `getArticleCount`).
 - [ ] 10. Hak edit artikel dicek via string username, sebaiknya via user id.
 - [ ] 11. `Access-Control-Allow-Origin: *` di `public_html/api/.htaccess` — pastikan API tidak pernah

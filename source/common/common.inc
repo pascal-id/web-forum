@@ -32,6 +32,12 @@ const
   TAG_USERNAME = '__username__';
   TAG_GRAVATAR = '__gravatar__';
   TAG_IP_ADDRESS = '__ipaddress__';
+  TAG_CSRF_TOKEN = '__csrf_token__';
+
+  // header yang dikirim JS (app.js) di setiap request POST/PUT/DELETE
+  CSRF_HEADER = 'X-CSRF-Token';
+  CSRF_SESSION_KEY = 'csrf_token';
+  ERR_CSRF_INVALID = 'Invalid or missing CSRF token. Reload the page.';
 
   ACTIVITY_MONTH_FORMAT = 'MMM yyyy';
   ACTIVITY_DATE_FORMAT = 'yyyy-mm-dd';

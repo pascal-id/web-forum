@@ -469,6 +469,11 @@ begin
     OutputJson(404, ERR_NOT_PERMITTED);
     Exit;
   end;
+  if not IsValidCSRFToken then
+  begin
+    OutputJson(403, ERR_CSRF_INVALID);
+    Exit;
+  end;
 
   ArticleId := _POST['id'].AsInteger;
   if ArticleId = 0 then

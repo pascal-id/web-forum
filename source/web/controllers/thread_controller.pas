@@ -152,6 +152,11 @@ begin
     OutputJson(400, ERR_NOT_PERMITTED);
     Exit;
   end;
+  if not IsValidCSRFToken then
+  begin
+    OutputJson(403, ERR_CSRF_INVALID);
+    Exit;
+  end;
 
   topicId := s2i(_POST['id']);
   replyMessage := UrlDecode(_POST['message']);
