@@ -6,7 +6,7 @@ interface
 
 uses
   forum_model, category_model, breadcrumb_controller,
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs,
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs,
   fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 type
@@ -65,14 +65,19 @@ begin
 
   categoryId:= _GET['$1'].AsInteger;
   if categoryId = 0 then
+  begin
     Redirect('/forum');
+    Exit;
+  end;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   if not FCategory.IsExist(categoryId) then
+  begin
     Redirect('/forum');
+    Exit;
+  end;
 
   // Get Forum List
   FForumAsArray := FForum.ByCategory(categoryId);

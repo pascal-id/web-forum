@@ -5,7 +5,7 @@ unit empty_controller;
 interface
 
 uses
-  Classes, SysUtils, fpcgi, fpjson, HTTPDefs, fastplaz_handler, database_lib, 
+  Classes, SysUtils, fastplaz_app, fpjson, HTTPDefs, fastplaz_handler, database_lib, 
     string_helpers, dateutils, datetime_helpers;
 
 type

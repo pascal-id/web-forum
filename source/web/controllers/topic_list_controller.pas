@@ -13,7 +13,7 @@ interface
 
 uses
   breadcrumb_controller, forum_model, topic_model,
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs, 
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs, 
     fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 {$include ../../common/common.inc}
@@ -78,13 +78,13 @@ begin
   forumId := _GET['$1'].AsInteger;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   FForum.AddJoin('phpbb_categories', 'cat_id', 'phpbb_forums.cat_id', ['cat_title']);
   if not FForum.FindFirst(['forum_id='+forumId.ToString, 'auth_read=0']) then
   begin
     Redirect('/forum/', 'Forum not Found');
+    Exit;
   end;
 
   maxPageNumber := (FForum['forum_topics'] div TOPIC_DEFAULT_LIMIT) - 1;

@@ -189,6 +189,7 @@ begin
   if Result.Count > 0 then
   begin
     s := Result.Items[0].Value['date'];
+    s := s.Replace('/', '-'); // DataToJSON uses the locale date separator
     postDate := s.AsDateTime;
     if YearsBetween(Now, postDate) > 2 then
     begin
@@ -205,6 +206,7 @@ begin
 
     // time label
     s := Result.Items[i].Value['date'];
+    s := s.Replace('/', '-'); // DataToJSON uses the locale date separator
     postDate := s.AsDateTime;
     timeLabelTemp := postDate.Format(ACTIVITY_DATE_FORMAT);
     if YearsBetween(Now, postDate) > 2 then

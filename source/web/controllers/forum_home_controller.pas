@@ -6,7 +6,7 @@ interface
 
 uses
   forum_model,
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs,
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs,
   fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers,
   json_helpers;
 
@@ -122,7 +122,6 @@ begin
   SetThemeParameter;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   ThemeUtil.Assign('$Title', 'Forum');

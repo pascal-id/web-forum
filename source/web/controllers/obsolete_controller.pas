@@ -5,7 +5,7 @@ unit obsolete_controller;
 interface
 
 uses
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs,
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs,
   fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 {$include ../../common/common.inc}
@@ -59,19 +59,27 @@ var
 
 begin
   if not GetUserSessionInfo then
+  begin
     OutputJson(400, ERR_NOT_PERMITTED);
+    Exit;
+  end;
 
   moduleName := _POST['module'];
   referenceId := _POST['id'].ToInteger;
   description := UrlDecode(_POST['description']);
   description := description.Replace('\n',#10);
   if moduleName.IsEmpty then
+  begin
     OutputJson(400, ERR_INVALID_PARAMETER);
+    Exit;
+  end;
   if referenceId = 0 then
+  begin
     OutputJson(400, ERR_INVALID_PARAMETER);
+    Exit;
+  end;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   with TObsoleteModel.Create() do
@@ -83,7 +91,13 @@ begin
     Value['title'] := _POST['title'];
     Value['description'] := description;
     Value['status_id'] := 2;
-    Save;
+    // a failed Save returns False (FastPlaz no longer stops the request)
+    if not Save then
+    begin
+      Free;
+      OutputJson(400, ERR_UNKNOWN);
+      Exit;
+    end;
     Free;
   end;
 

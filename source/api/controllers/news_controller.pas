@@ -18,7 +18,7 @@ unit news_controller;
 interface
 
 uses
-  Classes, SysUtils, fpcgi, fpjson, json_lib, HTTPDefs, fastplaz_handler,
+  Classes, SysUtils, fastplaz_app, fpjson, json_lib, HTTPDefs, fastplaz_handler,
   database_lib, string_helpers, dateutils, datetime_helpers;
 
 {$include ../../common/common.inc}
@@ -98,7 +98,6 @@ begin
     limitParameter := NEWS_DEFAULT_LIMIT;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   json['code'] := 0;
   with TNewsModel.Create() do
   begin
@@ -124,7 +123,10 @@ begin
   newsSlug := _GET['$2'];
 
   if newsIndex = 0 then
+  begin
     OutputJson( 404, ERR_INVALID_PARAMETER);
+    Exit;
+  end;
 
   previewOnly := False;
   if _GET['preview'] = '1' then

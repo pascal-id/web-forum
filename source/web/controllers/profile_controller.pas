@@ -6,7 +6,7 @@ interface
 
 uses
   user_model,
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs, 
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs, 
     fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 type
@@ -61,18 +61,26 @@ begin
   userName := _GET['$1'];
   userName := ExcludeTrailingBackslash(userName);
   if userName.IsEmpty then
+  begin
     Redirect('/');
+    Exit;
+  end;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   if not FUser.FindByUserName(userName) then
+  begin
     Redirect('/', 'User not found');
+    Exit;
+  end;
 
   userId := FUser['uid'];
   if userId = -1 then
+  begin
     Redirect('/');
+    Exit;
+  end;
   regDateAsInteger := FUser['regdate'];
   lastVisitAsInteger := FUser['lastvisit']; //TODO: get from session
   ThemeUtil.Assign('$UserName', FUser['username']);

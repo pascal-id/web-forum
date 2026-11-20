@@ -26,6 +26,7 @@ RewriteRule ^(auth)/(.*)$ auth.bin/$2 [QSA,L]
 RewriteRule ^(topics|topic)/(.*)$ topic.bin/$2 [QSA,L]
 RewriteRule ^(forum)/(.*)$ forum.bin/$2 [QSA,L]
 RewriteRule ^(news)/(.*)$ news.bin/$2 [QSA,L]
+RewriteRule ^(stats)/(.*)$ stats.bin/$2 [QSA,L]
 
 
 RewriteCond %{REQUEST_FILENAME} -d [OR]

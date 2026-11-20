@@ -4,11 +4,13 @@ program search;
 
 uses
   {$IFNDEF Windows}cthreads,{$ENDIF}
-  fpcgi, sysutils, fastplaz_handler, common, search_controller, search_routes;
+  fastplaz_app, sysutils, fastplaz_handler, common, search_controller, search_routes;
 
 begin
   Application.Title:='Search';
-  Application.Email := string( Config.GetValue(_SYSTEM_WEBMASTER_EMAIL,UTF8Decode('webmaster@' + GetEnvironmentVariable('SERVER_NAME'))));
+  Application.Email := Config.GetString(_SYSTEM_WEBMASTER_EMAIL);
+  if Application.Email = '' then
+    Application.Email := 'webmaster@' + GetEnvironmentVariable('SERVER_NAME');
   Application.DefaultModuleName := string( Config.GetValue(_SYSTEM_MODULE_DEFAULT, 'main'));
   Application.ModuleVariable := string( Config.GetValue(_SYSTEM_MODULE_VARIABLE, 'mod'));
   Application.AllowDefaultModule := True;
@@ -17,10 +19,12 @@ begin
 
   Application.OnGetModule := @FastPlasAppandler.OnGetModule;
   Application.PreferModuleName := True;
-  //{$if (fpc_version=3) and (fpc_release>=0) and (fpc_patch>=4)}
-  {$if FPC_FULlVERSION >= 30004}
+  {$if FPC_FULLVERSION >= 30004}
   Application.LegacyRouting := True;
   {$endif}
+
+  // startup banner, standalone (HTTP) mode only
+  ShowStandaloneBanner;
 
   Application.Initialize;
   Application.Run;

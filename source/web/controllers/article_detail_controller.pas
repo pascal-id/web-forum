@@ -6,7 +6,7 @@ interface
 
 uses
   news_model, user_model,
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs,
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs,
   fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 {$include ../../common/common.inc}
@@ -73,14 +73,19 @@ begin
 
   articleId := _GET['$1'].AsInteger;
   if articleId = 0 then
+  begin
     Redirect('/news/');
+    Exit;
+  end;
 
   DataBaseInit;
-  QueryExec('SET CHARACTER SET utf8mb4;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   if not FNews.Detail(articleId, previewOnly) then
+  begin
     Redirect('/news/');
+    Exit;
+  end;
 
   if not UserSession.IsExpired then
   begin
@@ -130,21 +135,32 @@ begin
   GetUserSessionInfo;
   SetThemeParameter;
   if UserSession.IsExpired then
+  begin
     OutputJson(404, ERR_NOT_PERMITTED);
+    Exit;
+  end;
 
   ArticleId := _POST['id'].AsInteger;
   if ArticleId = 0 then
+  begin
     OutputJson(404, ERR_DATA_NOT_FOUND);
+    Exit;
+  end;
 
   homeText := UrlDecode(_POST['homeText']);
   bodyText := UrlDecode(_POST['bodyText']);
   if (homeText.IsEmpty AND bodyText.IsEmpty) then
+  begin
     OutputJson(404, ERR_INVALID_PARAMETER);
+    Exit;
+  end;
 
   DataBaseInit;
-  QueryExec('SET CHARACTER SET utf8mb4;');
   if not FNews.Detail(articleId, True) then
+  begin
     OutputJson(404, ERR_DATA_NOT_FOUND);
+    Exit;
+  end;
 
   //check permission
   if UserSession.UserName <> FNews['contributor'] then
@@ -155,6 +171,7 @@ begin
       begin
         Free;
         OutputJson(400, ERR_NOT_PERMITTED);
+        Exit;
       end;
       Free;
     end;
@@ -165,7 +182,10 @@ begin
   if not bodyText.IsEmpty then
     FNews['bodytext'] := bodyText;
   if not FNews.Save('nid='+ArticleId.ToString) then
+  begin
     OutputJson(404, ARTICLE_SAVE_ERROR);
+    Exit;
+  end;
 
   OutputJson(200, OK);
 end;

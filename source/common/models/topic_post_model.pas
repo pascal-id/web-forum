@@ -48,7 +48,8 @@ begin
     begin
       Value['post_id'] := FPostId;
       Value['post_text'] := AMessage;
-      Save;
+      // a failed Save returns False (FastPlaz no longer stops the request)
+      Result := Save;
       Free;
     end;
   end;

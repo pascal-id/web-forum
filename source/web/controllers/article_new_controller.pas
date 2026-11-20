@@ -5,7 +5,7 @@ unit article_new_controller;
 interface
 
 uses
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs, 
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs, 
     fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 type
@@ -55,6 +55,7 @@ begin
   if UserSession.IsExpired then
   begin
     die('login dulu..');
+    Exit;
   end;
 
   s := IncDay(Now, 3).Format('dd-mm-yyyy hh:nn');
@@ -101,10 +102,12 @@ begin
   category := _POST['category'];
 
   if title.IsEmpty or homeText.IsEmpty or bodyText.IsEmpty or date.IsEmpty then
+  begin
     OutputJson(400, ERR_INVALID_PARAMETER);
+    Exit;
+  end;
 
   DataBaseInit;
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   articleId := 0;
@@ -114,6 +117,7 @@ begin
     begin
       Free;
       OutputJson(400, ARTICLE_SAVE_ERROR);
+      Exit;
     end;
     articleId := LastInsertID;
     Free;
