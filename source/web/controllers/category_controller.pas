@@ -86,7 +86,8 @@ begin
 
   // Open graph
   ogURL := BaseURL + 'forum/category/' + categoryId.ToString + '/' + GenerateSlug(FCategory.CategoryTitle);
-  SetOpenGraph(FCategory.CategoryTitle, BaseURL + FORUM_DEFAULT_OGIMAGE, ogURL);
+  SetOpenGraph(FCategory.CategoryTitle, BaseURL + FORUM_DEFAULT_OGIMAGE, ogURL,
+    '', 'website', False, False);
 
 
   // Generate BreadCrumb

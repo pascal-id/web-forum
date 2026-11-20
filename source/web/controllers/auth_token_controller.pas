@@ -31,7 +31,7 @@ type
 
 implementation
 
-uses theme_controller, common, common_lib, auth_token_model;
+uses theme_controller, common, common_lib, auth_token_model, facebook_lib;
 
 constructor TAuthTokenController.CreateNew(AOwner: TComponent;
   CreateMode: integer);
@@ -59,9 +59,10 @@ var
   tokenElapsed: integer;
 begin
   FacebookToken := Header['Token'];
-  if FacebookToken.IsEmpty then
+  // token juga dipakai di query SQL: hanya terima format token yang valid
+  if not IsValidTokenFormat(FacebookToken) then
   begin
-    OutputJson(400, ERR_INVALID_PARAMETER);
+    OutputJson(400, ERR_AUTH_INVALID_TOKEN);
     Exit;
   end;
 

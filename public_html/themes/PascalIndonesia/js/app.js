@@ -1,4 +1,17 @@
 var localToken = '';
+
+// CSRF: kirim token session (meta csrf-token) di setiap request ajax yang
+// mengubah data ke situs ini sendiri; diverifikasi di server (IsValidCSRFToken)
+$(document).ajaxSend(function(event, xhr, settings){
+  var method = (settings.type || 'GET').toUpperCase();
+  if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') return;
+  var url = settings.url || '';
+  var sameSite = (url.indexOf('/') === 0 && url.indexOf('//') !== 0)
+    || (typeof BaseURL !== 'undefined' && url.indexOf(BaseURL) === 0);
+  if (!sameSite) return;
+  var token = $('meta[name="csrf-token"]').attr('content');
+  if (token) xhr.setRequestHeader('X-CSRF-Token', token);
+});
 $(function () {
   
   'use strict'

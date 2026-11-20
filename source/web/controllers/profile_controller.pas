@@ -27,7 +27,7 @@ type
 
 implementation
 
-uses theme_controller, common, common_lib;
+uses theme_controller, common, common_lib, html_sanitizer_lib;
 
 constructor TProfileController.CreateNew(AOwner: TComponent; CreateMode: integer
   );
@@ -93,7 +93,9 @@ begin
   ThemeUtil.Assign('$ArticleCount', FUser.ArticleCount.ToString);
   ThemeUtil.Assign('$PostCount', FUser.PostCount.ToString);
   ThemeUtil.Assign('$CommentCount', FUser.CommentCount.ToString);
-  ThemeUtil.Assign('$Signature', FUser['signature']);
+  // signature: BBCode/markdown -> HTML yang sudah disanitasi
+  ThemeUtil.Assign('$Signature',
+    SafeHTML(MarkdownToHTML(FormatTextLikeForum(String(FUser['signature'])))));
 
   ThemeUtil.Assign('$UserLevel', FUser['level']);
   ThemeUtil.Assign('$UserRank', FUser['rank']);
