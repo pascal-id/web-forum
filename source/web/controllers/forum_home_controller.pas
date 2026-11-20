@@ -127,7 +127,8 @@ begin
   ThemeUtil.Assign('$Title', 'Forum');
   FForumAsArray := FForum.ListDetail;
 
-  SetOpenGraph('Forum Pascal Indonesia', BaseURL + FORUM_DEFAULT_OGIMAGE, BaseURL + 'forum/');
+  SetOpenGraph('Forum Pascal Indonesia', BaseURL + FORUM_DEFAULT_OGIMAGE, BaseURL + 'forum/',
+    '', 'website', False, False);
 
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
   Response.Content := ThemeUtil.Render();

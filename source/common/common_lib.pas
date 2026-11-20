@@ -36,7 +36,9 @@ function ReplaceFromLegacy(AContent: string): string;
 
 function GetOpenGraphDescription(AContent: string; AMaxLength: integer = 200): string;
 function SetOpenGraph(ATitle, AImage, AURL: string; ADescription: string = '';
-  AType: string = 'website'; ALargeImage: boolean = False): boolean;
+  AType: string = 'website'; ALargeImage: boolean = False;
+  ACanonical: boolean = True): boolean;
+procedure SetCanonical(AURL: string);
 function GetUserSessionInfo: boolean;
 function GetCSRFToken: string;
 function IsValidCSRFToken: boolean;
@@ -202,9 +204,18 @@ begin
     'https://pascal-id.org/syntax');
 end;
 
+// Rendered by [$CanonicalTag filter=defaultempty] in master.html, so it must
+// be called BEFORE ThemeUtil.Render(); a call from inside the maincontent tag
+// handler is too late because <head> is already rendered by then.
+procedure SetCanonical(AURL: string);
+begin
+  ThemeUtil.Assign('$CanonicalTag',
+    '<link rel="canonical" href="' + HTMLEncode(AURL) + '" />');
+end;
+
 // AddMeta writes the content as-is, so every value is HTML-encoded here
 function SetOpenGraph(ATitle, AImage, AURL: string; ADescription: string;
-  AType: string; ALargeImage: boolean): boolean;
+  AType: string; ALargeImage: boolean; ACanonical: boolean): boolean;
 var
   title, image, url, description: string;
 begin
@@ -220,6 +231,9 @@ begin
   ThemeUtil.AddMeta('og:image', image, 'property');
   ThemeUtil.AddMeta('og:site_name', HTMLEncode(Config['systems/sitename']), 'property');
   ThemeUtil.AddMeta('og:url', url, 'property');
+  // list pages pass ACanonical=False because their og:url drops ?page=
+  if ACanonical then
+    SetCanonical(AURL);
   if description <> '' then
     ThemeUtil.AddMeta('description', description);
 

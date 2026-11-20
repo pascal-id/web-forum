@@ -446,6 +446,8 @@ begin
 
   ThemeUtil.Assign('$Date', dt.HumanReadable);
   ThemeUtil.Assign('$ArticleUrl', BaseURL + 'news/' + articleId.ToString + '/' + String(FNews['slug']));
+  // SetOpenGraph runs inside the maincontent handler, after <head> is rendered
+  SetCanonical(BaseURL + 'news/' + articleId.ToString + '/' + String(FNews['slug']));
 
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
   //ThemeUtil.TrimWhiteSpace := False;

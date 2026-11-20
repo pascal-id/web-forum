@@ -59,7 +59,8 @@ begin
 
   ThemeUtil.Assign('$Title', 'Search ' + query);
 
-  SetOpenGraph('Search', BaseURL + SEARCH_DEFAULT_OGIMAGE, BaseURL + 'search/');
+  SetOpenGraph('Search', BaseURL + SEARCH_DEFAULT_OGIMAGE, BaseURL + 'search/',
+    '', 'website', False, False);
 
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
   Response.Content := ThemeUtil.Render();

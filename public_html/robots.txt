@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://www.pascal-dev.org/sitemap.xml
+Sitemap: https://pascal-dev.org/sitemap.xml

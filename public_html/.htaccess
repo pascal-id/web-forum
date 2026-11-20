@@ -15,20 +15,33 @@ Header set X-Frame-Options SAMEORIGIN
 
 SetEnvIf Token "(.*)" Token=$1
 
-# redirect http to https
-#RewriteCond %{SERVER_PORT} 80 
-#RewriteRule ^(.*)$ https://www.pascal-dev.org/$1 [R,L]
-
-# redirect www
-RewriteCond %{HTTP_HOST} !^www\.
-RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+# canonical host: https://pascal-dev.org (tanpa www)
+# www -> apex
+RewriteCond %{HTTP_HOST} ^www\.pascal-dev\.org$ [NC]
+RewriteRule ^(.*)$ https://pascal-dev.org/$1 [R=301,L]
+# http -> https (di belakang Cloudflare: cek X-Forwarded-Proto)
+RewriteCond %{HTTP_HOST} ^pascal-dev\.org$ [NC]
+RewriteCond %{HTTP:X-Forwarded-Proto} =http
+RewriteRule ^(.*)$ https://pascal-dev.org/$1 [R=301,L]
+# http -> https (akses langsung tanpa proxy)
+RewriteCond %{HTTP_HOST} ^pascal-dev\.org$ [NC]
+RewriteCond %{HTTP:X-Forwarded-Proto} ^$
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://pascal-dev.org/$1 [R=301,L]
 
 #RewriteRule ^(search)/(.*)$ search.bin/$2 [QSA,L]
 #RewriteRule ^(user)/(.*)/$ auth.bin/$2/ [QSA,L]
 #RewriteRule ^(auth)/(.*)$ auth.bin/$2 [QSA,L]
 
+# Tiga aturan ini hanya berlaku jika <nama>.bin benar-benar ada (search.bin,
+# auth.bin). Selain itu (/forum/, /news/, /thread/...) jatuh ke forumpascal.bin.
+# Tanpa syarat -f, putaran rewrite kedua mengubah "forumpascal.bin/news/" menjadi
+# "forumpascal.bin.bin/news" dan route '/forum' ikut cocok (halaman salah).
+RewriteCond %{DOCUMENT_ROOT}/$1.bin -f
 RewriteRule ^(.*)/(.*)/(.*)/$ $1.bin/$2/$3 [QSA,L]
+RewriteCond %{DOCUMENT_ROOT}/$1.bin -f
 RewriteRule ^(.*)/(.*)/$ $1.bin/$2 [QSA,L]
+RewriteCond %{DOCUMENT_ROOT}/$1.bin -f
 RewriteRule ^(.*)/$ $1.bin [QSA,L]
 
 <Files ~ "\.(tpl|txt)$">
