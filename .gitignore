@@ -51,8 +51,7 @@ public_html/config/config.json
 public_html/ztemp/cache/*.txt
 public_html/ztemp/error_log/*log
 public_html/ztemp/sessions/*ses
-source/api/lib/
-source/web/lib/
+source/*/lib/
 
 *.cache
 *.dll
