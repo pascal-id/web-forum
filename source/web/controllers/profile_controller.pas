@@ -103,7 +103,7 @@ begin
   ThemeUtil.Assign('$UserRankName', FUser.RankName);
 
   SetOpenGraph( 'User Profile: ' + FUser['username'],
-    'https://img.pascal-id.org/' + 'profile-image/'+FUser['gravatar']+'.jpg',
+    BaseURL + 'profile-image/'+FUser['gravatar']+'.jpg',
     BaseURL + 'profile/'+FUser['username']);
 
   ActivityAsArray := FUser.Activity(userId, userName);

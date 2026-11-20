@@ -201,7 +201,7 @@ begin
   Result := Result.Replace('src="http://delphi-id.org/',
     'src="' + ThemeUtil.BaseURL + 'legacy-image/delphi-id.org/');
   Result := Result.Replace('http://delphi-id.org/syntax',
-    'https://pascal-id.org/syntax');
+    ThemeUtil.BaseURL + 'syntax');
 end;
 
 // Rendered by [$CanonicalTag filter=defaultempty] in master.html, so it must
