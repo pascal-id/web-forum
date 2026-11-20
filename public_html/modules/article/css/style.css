@@ -190,14 +190,14 @@
   border: 1px solid #e1e4e8 !important;
   border-radius: 6px;
   overflow: auto;
-  font: normal normal 13px/1.55 "Fira Code", Consolas, "Courier New", monospace !important;
+  font: normal normal 0.9rem/1.55 "Fira Code", Consolas, "Courier New", monospace !important;
 }
 .article .md-content pre:hover {
   box-shadow: none;
 }
 .article .md-content pre code {
   padding: 0 !important;
-  font: normal normal 13px/1.55 "Fira Code", Consolas, "Courier New", monospace !important;
+  font: normal normal 0.9rem/1.55 "Fira Code", Consolas, "Courier New", monospace !important;
   color: #24292f;
   background: none;
   white-space: pre !important;
