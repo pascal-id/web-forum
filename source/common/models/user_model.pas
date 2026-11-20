@@ -18,6 +18,7 @@ type
   TUserModel = class(TSimpleModel)
   private
     FCurrentUserName: String;
+    FNewUserId: Integer;
     function getArticleCount: Integer;
     function getCommentCount: Integer;
     function getLevelName: String;
@@ -35,6 +36,8 @@ type
     function IsAdministrator(AUserId: Integer): Boolean;
 
     property CurrentUserName: String read FCurrentUserName;
+    // users.uid dari AddFromFacebook (LastInsertID setelahnya = id user_mapping)
+    property NewUserId: Integer read FNewUserId;
     property RankName: String read getRankName;
     property LevelName: String read getLevelName;
     property ArticleCount: Integer read getArticleCount;
@@ -287,12 +290,15 @@ function TUserModel.AddFromFacebook(AId: Int64; AFirstName, ALastName: String;
 var
   authUserId: Integer;
 begin
+  // data dari Facebook tidak lewat _POST, jadi belum di-escape:
+  // escape di setiap tempat yang digabung ke SQL, Value[] memakai parameter
   Result := False;
+  FNewUserId := 0;
   FCurrentUserName := AFirstName + ALastName;
   authUserId := AExistingUserID;
   if AExistingUserID = 0 then
   begin
-    if FindByUserName(FCurrentUserName) then
+    if FindByUserName(mysql_real_escape_string(FCurrentUserName)) then
     begin
       FCurrentUserName += RandomString(3,5);
     end;
@@ -304,6 +310,7 @@ begin
     if Save() then
     begin
       authUserId := LastInsertID;
+      FNewUserId := authUserId;
     end;
   end;
 
@@ -311,7 +318,7 @@ begin
   begin
     QueryExec('INSERT INTO user_mapping (type_id, user_id, ref_id, email, date)'
       + #10'VALUES'
-      + #10'(1,'+authUserId.ToString+','+AId.ToString+', "'+AEmail+'", NOW())'
+      + #10'(1,'+authUserId.ToString+','+AId.ToString+', "'+mysql_real_escape_string(AEmail)+'", NOW())'
     );
     Result := True;
   end;
@@ -323,7 +330,8 @@ function TUserModel.AddMapping(ATypeId, AUserId: Integer; AReferenceId: String;
 begin
   QueryExec('INSERT INTO user_mapping (type_id, user_id, ref_id, email, date)'
     + #10'VALUES'
-    + #10'('+ATypeId.ToString+','+AUserId.ToString+',"'+AReferenceId+'", "'+AEmail+'", NOW())'
+    + #10'('+ATypeId.ToString+','+AUserId.ToString+',"'+mysql_real_escape_string(AReferenceId)
+    + '", "'+mysql_real_escape_string(AEmail)+'", NOW())'
   );
   Result := True;
 end;

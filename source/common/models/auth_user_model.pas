@@ -31,7 +31,8 @@ end;
 
 function TAuthUserModel.FindByEmail(const AEmail: string): boolean;
 begin
-  Result := FindFirst(['email="' + AEmail + '"'], '',
+  // AEmail berasal dari Graph API / bukan _POST: belum di-escape
+  Result := FindFirst(['email="' + mysql_real_escape_string(AEmail) + '"'], '',
     'auid, username, email, md5(email) gravatar, reg_date, activated');
 end;
 
@@ -42,7 +43,7 @@ var
 begin
   Result := False;
   selectMapping := 'SELECT * FROM user_mapping WHERE type_id=1 ' +
-    #10'AND user_id=' + AUserId.ToString + ' AND ref_id=''' + AReferenceId + '''' +
+    #10'AND user_id=' + AUserId.ToString + ' AND ref_id=''' + mysql_real_escape_string(AReferenceId) + '''' +
     #10'ORDER BY date DESC LIMIT 1';
   if Data.Active then
     Data.Close;

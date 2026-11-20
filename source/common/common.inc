@@ -7,6 +7,11 @@ const
   ERR_UNKNOWN = 'Error unknown';
 
   ERR_AUTH_EMAIL_REQUIRED = 'Email required.';
+  ERR_AUTH_INVALID_TOKEN = 'Invalid token.';
+
+  // default Facebook App ID (sama dengan FacebookAppId di themes/.../js/facebook.js),
+  // bisa di-override lewat config: "facebook": { "app_id": "..." }
+  FACEBOOK_APP_ID = '2429307740650423';
 
   TOPIC_DEFAULT_LIMIT = 25;
   THREAD_DEFAULT_LIMIT = 10;

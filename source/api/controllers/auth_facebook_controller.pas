@@ -35,7 +35,8 @@ type
 
 implementation
 
-uses common, auth_user_model, auth_token_model, user_model, common_lib;
+uses common, auth_user_model, auth_token_model, user_model, common_lib,
+  facebook_lib;
 
 constructor TAuthFacebookController.CreateNew(AOwner: TComponent; CreateMode: integer);
 begin
@@ -54,9 +55,10 @@ var
   tokenElapsed: Integer;
 begin
   FacebookToken := GetEnvironmentVariable('Token');
-  if FacebookToken.IsEmpty then
+  // token juga dipakai di query SQL: hanya terima format token yang valid
+  if not IsValidTokenFormat(FacebookToken) then
   begin
-    OutputJson(400, ERR_INVALID_PARAMETER);
+    OutputJson(400, ERR_AUTH_INVALID_TOKEN);
     Exit;
   end;
 
