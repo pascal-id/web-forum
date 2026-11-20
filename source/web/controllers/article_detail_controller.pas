@@ -522,18 +522,28 @@ end;
 
 function TArticleDetailController.Tag_MainContent_Handler(const TagName: string;
   Params: TStringList): string;
+var
+  homeText, bodyText, ogImage, ogDefaultImage, ogDescription: string;
 begin
-  ThemeUtil.Assign('$HomeText', ArticleContentToHTML(FNews['hometext']));
-  ThemeUtil.Assign('$BodyText', ArticleContentToHTML(FNews['bodytext']));
+  homeText := ArticleContentToHTML(FNews['hometext']);
+  bodyText := ArticleContentToHTML(FNews['bodytext']);
+  ThemeUtil.Assign('$HomeText', homeText);
+  ThemeUtil.Assign('$BodyText', bodyText);
   ThemeUtil.AssignVar['$Article'] := @FNews.Data;
   Result := ThemeUtil.RenderFromContent(nil, '', 'modules/article/detail.html');
   Result := ReplaceFromLegacy(Result);
   Result := Result.Replace('\''', '''');
 
-  SetOpenGraph(FNews['title'],
-    GetOpenGraphImage(Result, BaseURL + ARTICLE_DEFAULT_OGIMAGE),
-    BaseURL + 'news/' + articleId.ToString + '/' + FNews['slug']);
+  // image and description come from the article content only
+  ogDefaultImage := BaseURL + ARTICLE_DEFAULT_OGIMAGE;
+  ogImage := GetOpenGraphImage(ReplaceFromLegacy(homeText + bodyText), ogDefaultImage);
+  ogDescription := GetOpenGraphDescription(homeText);
+  if ogDescription = '' then
+    ogDescription := GetOpenGraphDescription(bodyText);
 
+  SetOpenGraph(FNews['title'], ogImage,
+    BaseURL + 'news/' + articleId.ToString + '/' + FNews['slug'],
+    ogDescription, 'article', ogImage <> ogDefaultImage);
 end;
 
 
