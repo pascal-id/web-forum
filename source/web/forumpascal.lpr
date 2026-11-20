@@ -10,7 +10,7 @@ uses
   article_controller, article_detail_controller, user_controller,
   profile_controller, user_model, obsolete_controller, obsolete_model,
   article_new_controller, topic_new_controller, topic_post_model,
-  topic_post_text_model;
+  topic_post_text_model, sitemap_controller;
 
 begin
   Application.Title:='Forum Pascal';

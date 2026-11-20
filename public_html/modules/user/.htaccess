@@ -1,9 +1,10 @@
 # ----------------------------------------------------------------------
 # Purpose of file: block web access to not allowed files
 #                  stored under the modules/ directory
+#
+# Only static assets are served, everything else (templates, ...) is 403.
+# mod_rewrite instead of "deny from all" + <FilesMatch> "allow from all":
+# LiteSpeed (production) does not apply that exception, so css/js were 403.
 # ----------------------------------------------------------------------
-deny from all
-<FilesMatch "\.(css|js|jpg|gif|png|swf)$">
-order allow,deny
-allow from all
-</filesmatch>
+RewriteEngine On
+RewriteRule !\.(css|js|map|jpe?g|gif|png|svg|webp|ico|woff2?|ttf|eot|swf)$ - [F,NC]

@@ -34,7 +34,9 @@ function GeneratePagination(ACurrentPage: integer; ANumberOfPage: integer;
 function GetOpenGraphImage(AContent: string; ADefault: string = 'logo.png'): string;
 function ReplaceFromLegacy(AContent: string): string;
 
-function SetOpenGraph(ATitle, AImage, AURL: string): boolean;
+function GetOpenGraphDescription(AContent: string; AMaxLength: integer = 200): string;
+function SetOpenGraph(ATitle, AImage, AURL: string; ADescription: string = '';
+  AType: string = 'website'; ALargeImage: boolean = False): boolean;
 function GetUserSessionInfo: boolean;
 procedure SetThemeParameter;
 procedure ResetSession;
@@ -113,23 +115,75 @@ begin
   end;
 end;
 
+// first <img> in the content as an absolute URL (Open Graph needs one)
 function GetOpenGraphImage(AContent: string; ADefault: string): string;
+var
+  url, base: string;
 begin
   Result := ADefault;
   try
     with TRegExpr.Create do
-    begin
-      Expression := '<img src="(.+?)"';
+    try
+      ModifierI := True;
+      // src can be anywhere in the tag, quoted with " or ' or unquoted
+      Expression := '<img\s[^>]*?\bsrc\s*=\s*["'']?([^"''\s>]+)';
       if Exec(AContent) then
       begin
-        Result := Match[1];
-        Result := Result.Replace('"', '').Replace('''', '').Trim;
-        Result := Result.Replace('http://', 'https://');
+        url := Trim(Match[1]);
+        if url = '' then
+          Exit;
+        if Copy(url, 1, 5) = 'data:' then
+          Exit;
+        base := ThemeUtil.BaseURL;
+        if (base <> '') and (base[Length(base)] = '/') then
+          Delete(base, Length(base), 1);
+        if Copy(url, 1, 2) = '//' then
+          url := 'https:' + url
+        else if Copy(url, 1, 7) = 'http://' then
+          url := 'https://' + Copy(url, 8, MaxInt)
+        else if Copy(url, 1, 8) <> 'https://' then
+        begin
+          // relative path
+          if Copy(url, 1, 1) <> '/' then
+            url := '/' + url;
+          url := base + url;
+        end;
+        Result := url;
       end;
+    finally
       Free;
     end;
   except
   end;
+end;
+
+// plain text summary of HTML content for meta description
+function GetOpenGraphDescription(AContent: string; AMaxLength: integer): string;
+var
+  i: integer;
+begin
+  Result := ReplaceRegExpr('(?i)<(br|/p|/li|/h[1-6]|/div)[^>]*>', AContent, ' ', False);
+  Result := html_lib.StripTags(Result);
+  Result := StringReplace(Result, '&nbsp;', ' ', [rfReplaceAll, rfIgnoreCase]);
+  Result := StringReplace(Result, '&quot;', '"', [rfReplaceAll, rfIgnoreCase]);
+  Result := StringReplace(Result, '&#39;', '''', [rfReplaceAll]);
+  Result := StringReplace(Result, '&lt;', '<', [rfReplaceAll, rfIgnoreCase]);
+  Result := StringReplace(Result, '&gt;', '>', [rfReplaceAll, rfIgnoreCase]);
+  Result := StringReplace(Result, '&amp;', '&', [rfReplaceAll, rfIgnoreCase]);
+  Result := Trim(ReplaceRegExpr('\s+', Result, ' ', False));
+  if Length(Result) <= AMaxLength then
+    Exit;
+  // cut at a word boundary, and not in the middle of a UTF-8 character
+  i := AMaxLength;
+  while (i > AMaxLength div 2) and (Result[i] <> ' ') do
+    Dec(i);
+  if Result[i] <> ' ' then
+  begin
+    i := AMaxLength;
+    while (i > 1) and ((Ord(Result[i + 1]) and $C0) = $80) do
+      Dec(i);
+  end;
+  Result := TrimRight(Copy(Result, 1, i)) + '...';
 end;
 
 function ReplaceFromLegacy(AContent: string): string;
@@ -146,20 +200,37 @@ begin
     'https://pascal-id.org/syntax');
 end;
 
-function SetOpenGraph(ATitle, AImage, AURL: string): boolean;
+// AddMeta writes the content as-is, so every value is HTML-encoded here
+function SetOpenGraph(ATitle, AImage, AURL: string; ADescription: string;
+  AType: string; ALargeImage: boolean): boolean;
+var
+  title, image, url, description: string;
 begin
-  ThemeUtil.AddMeta('og:type', 'website', 'property');
-  ThemeUtil.AddMeta('og:title', ATitle, 'property');
-  ThemeUtil.AddMeta('og:image', AImage, 'property');
-  ThemeUtil.AddMeta('og:site_name', Config['systems/sitename'], 'property');
-  ThemeUtil.AddMeta('og:url', AURL, 'property');
+  title := HTMLEncode(ATitle);
+  image := HTMLEncode(AImage);
+  url := HTMLEncode(AURL);
+  description := HTMLEncode(ADescription);
+
+  ThemeUtil.AddMeta('og:type', AType, 'property');
+  ThemeUtil.AddMeta('og:title', title, 'property');
+  if description <> '' then
+    ThemeUtil.AddMeta('og:description', description, 'property');
+  ThemeUtil.AddMeta('og:image', image, 'property');
+  ThemeUtil.AddMeta('og:site_name', HTMLEncode(Config['systems/sitename']), 'property');
+  ThemeUtil.AddMeta('og:url', url, 'property');
+  if description <> '' then
+    ThemeUtil.AddMeta('description', description);
 
   //twitter
-  ThemeUtil.AddMeta('twitter:card', 'summary');
-  ThemeUtil.AddMeta('twitter:title', ATitle);
-  ThemeUtil.AddMeta('twitter:image', AImage);
-  ThemeUtil.AddMeta('twitter:site', Config['systems/sitename']);
-  ThemeUtil.AddMeta('twitter:url', AURL);
+  if ALargeImage then
+    ThemeUtil.AddMeta('twitter:card', 'summary_large_image')
+  else
+    ThemeUtil.AddMeta('twitter:card', 'summary');
+  ThemeUtil.AddMeta('twitter:title', title);
+  if description <> '' then
+    ThemeUtil.AddMeta('twitter:description', description);
+  ThemeUtil.AddMeta('twitter:image', image);
+  ThemeUtil.AddMeta('twitter:url', url);
 
   Result := True;
 end;
