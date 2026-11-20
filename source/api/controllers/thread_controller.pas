@@ -13,7 +13,7 @@ unit thread_controller;
 interface
 
 uses
-  Classes, SysUtils, fpcgi, fpjson, json_lib, HTTPDefs, fastplaz_handler,
+  Classes, SysUtils, fastplaz_app, fpjson, json_lib, HTTPDefs, fastplaz_handler,
   database_lib, string_helpers, dateutils, datetime_helpers;
 
 {$include ../../common/common.inc}
@@ -75,7 +75,6 @@ begin
     FLimit := THREAD_DEFAULT_LIMIT;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   with TTopicModel.Create() do
   begin
     topicAsArray := Thread(FTopicID, pageIndex, FLimit);

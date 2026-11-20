@@ -13,7 +13,7 @@ interface
 
 uses
   topic_model, breadcrumb_controller,
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs,
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs,
   fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 {$include ../../common/common.inc}
@@ -81,12 +81,14 @@ begin
   FLimit := THREAD_DEFAULT_LIMIT;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   threadAsArray := FTopics.Thread(threadID, Page, FLimit);
   if threadAsArray.Count = 0 then
+  begin
     Redirect('/forum/', 'Topic not Found');
+    Exit;
+  end;
 
   ThemeUtil.Assign('$TopicName', FTopics.ThreadTitle);
   ThemeUtil.Assign('$Title', 'Thread: ' + FTopics.ThreadTitle);
@@ -144,21 +146,25 @@ begin
   if UserSession.IsExpired then
   begin
     OutputJson(400, ERR_NOT_PERMITTED);
+    Exit;
   end;
 
   topicId := s2i(_POST['id']);
   replyMessage := UrlDecode(_POST['message']);
 
   if (topicId = 0) or (replyMessage.IsEmpty) then
+  begin
     OutputJson(400, ERR_INVALID_PARAMETER);
+    Exit;
+  end;
 
   DataBaseInit;
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   if not FTopics.ReplyThread(topicId, UserSession.UserId, replyMessage) then
   begin
     OutputJson(400, ERR_UNKNOWN);
+    Exit;
   end;
 
   json := TJSONUtil.Create;

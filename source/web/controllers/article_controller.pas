@@ -5,7 +5,7 @@ unit article_controller;
 interface
 
 uses
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, datetime_lib,
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, datetime_lib,
   HTTPDefs, fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers,
   json_helpers;
 
@@ -65,8 +65,10 @@ begin
   Result := '<ul>';
   for i := 0 to AContent.Count - 1 do
   begin
+    // DataToJSON writes the date with the locale date separator
+    // ('2026/11/20' on Windows, '2026-11-20' on Linux)
     s := AContent.Items[i].ValueOfName('date').AsString;
-    dt := ScanDateTime('YYYY-MM-DD hh:nn:ss', s);
+    dt := s.Replace('/', '-').AsDateTime;
     archivedTopic := AContent.Items[i].ValueOfName('archived').AsInteger;
     if not AIsRandom then
     begin
@@ -106,7 +108,6 @@ begin
   SetThemeParameter;
 
   DataBaseInit;
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   ThemeUtil.Assign('$Title', 'Article');

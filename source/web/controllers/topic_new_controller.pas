@@ -6,7 +6,7 @@ interface
 
 uses
   breadcrumb_controller, forum_model, topic_model,
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs, 
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs, 
     fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 type
@@ -63,16 +63,19 @@ begin
 
   FForumId := _GET['$1'].ToInteger;
   if FForumId = 0 then
+  begin
     Redirect('/forum/');
+    Exit;
+  end;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   FForum.AddJoin('phpbb_categories', 'cat_id', 'phpbb_forums.cat_id', ['cat_title']);
   if not FForum.FindFirst(['forum_id='+FForumId.ToString, 'auth_read=0']) then
   begin
     Redirect('/forum/', 'Forum not Found');
+    Exit;
   end;
 
   ThemeUtil.Assign('$CategoryTitle', FForum.CategoryTitle);
@@ -106,34 +109,37 @@ begin
 
   FForumId := _GET['$1'].ToInteger;
   if FForumId = 0 then
+  begin
     Redirect('/forum/');
+    Exit;
+  end;
 
   topicTitle := _POST['title'];
   topicMessage := UrlDecode(_POST['message']);
   if topicTitle.IsEmpty or topicMessage.IsEmpty then
+  begin
     OutputJson(400, ERR_INVALID_PARAMETER);
+    Exit;
+  end;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
-  with FTopics.Create() do
+  if not FTopics.Add(UserSession.UserId, FForumId, topicTitle, topicMessage) then
   begin
-    if not Add(UserSession.UserId, FForumId, topicTitle, topicMessage) then
-    begin
-      Free;
-      OutputJson(400, TOPIC_SAVE_ERROR);
-    end;
-
-    json := TJSONUtil.Create;
-    json['code'] := 0;
-    json['topic_id'] := TopicId;
-    json['topic_slug'] := GenerateSlug(topicTitle);
-    json['forum_id'] := FForumId;
+    OutputJson(400, TOPIC_SAVE_ERROR);
+    Exit;
   end;
+
+  json := TJSONUtil.Create;
+  json['code'] := 0;
+  json['topic_id'] := FTopics.TopicId;
+  json['topic_slug'] := GenerateSlug(topicTitle);
+  json['forum_id'] := FForumId;
 
   // Respose
   Response.Content := json.AsJSON;
+  json.Free;
 end;
 
 function TTopicNewController.Tag_MainContent_Handler(const TagName: string;

@@ -5,7 +5,7 @@ unit common_lib;
 interface
 
 uses
-  fpcgi,
+  fastplaz_app,
   fastplaz_handler, html_lib, theme_controller, RegExpr,
   Classes, SysUtils, dateutils, string_helpers;
 
