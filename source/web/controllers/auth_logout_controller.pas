@@ -5,7 +5,7 @@ unit auth_logout_controller;
 interface
 
 uses
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs, 
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs, 
     fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 type
@@ -48,6 +48,7 @@ end;
 procedure TAuthLogoutController.Get;
 begin
   die('{logout}');
+  Exit;
   Tags['maincontent'] := @Tag_MainContent_Handler; //<<-- tag maincontent handler
   Response.Content := ThemeUtil.Render();
 end;

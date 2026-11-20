@@ -16,7 +16,7 @@ unit auth_facebook_controller;
 interface
 
 uses
-  Classes, SysUtils, fpcgi, fpjson, json_lib, HTTPDefs, fastplaz_handler,
+  Classes, SysUtils, fastplaz_app, fpjson, json_lib, HTTPDefs, fastplaz_handler,
   database_lib, string_helpers, dateutils, datetime_helpers;
 
 {$include ../../common/common.inc}
@@ -55,10 +55,12 @@ var
 begin
   FacebookToken := GetEnvironmentVariable('Token');
   if FacebookToken.IsEmpty then
+  begin
     OutputJson(400, ERR_INVALID_PARAMETER);
+    Exit;
+  end;
 
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
 
   json := TJSONUtil.Create;
   json['code'] := 404;

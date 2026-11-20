@@ -11,7 +11,7 @@ unit forum_controller;
 interface
 
 uses
-  Classes, SysUtils, fpcgi, fpjson, json_lib, HTTPDefs, fastplaz_handler, 
+  Classes, SysUtils, fastplaz_app, fpjson, json_lib, HTTPDefs, fastplaz_handler, 
     database_lib, string_helpers, dateutils, datetime_helpers;
 
 {$include ../../common/common.inc}
@@ -64,7 +64,6 @@ begin
     json['code'] := 0;
     json['count'] := -1;
     json.ValueArray['data'] := All;
-    die(data.sql);
     json['count'] := RecordCount;
     Free;
   end;

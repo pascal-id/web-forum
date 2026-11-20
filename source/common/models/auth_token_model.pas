@@ -5,7 +5,7 @@ unit auth_token_model;
 interface
 
 uses
-  common, fpcgi,
+  common, fastplaz_app,
   Classes, SysUtils, database_lib, string_helpers, dateutils, datetime_helpers;
 
 type

@@ -4,12 +4,14 @@ program news;
 
 uses
   {$IFNDEF Windows}cthreads,{$ENDIF}
-  fpcgi, sysutils, fastplaz_handler, common, news_controller, news_routes,
+  fastplaz_app, sysutils, fastplaz_handler, common, news_controller, news_routes,
   news_model, news_search_controller;
 
 begin
   Application.Title:='News';
-  Application.Email := string( Config.GetValue(_SYSTEM_WEBMASTER_EMAIL,UTF8Decode('webmaster@' + GetEnvironmentVariable('SERVER_NAME'))));
+  Application.Email := Config.GetString(_SYSTEM_WEBMASTER_EMAIL);
+  if Application.Email = '' then
+    Application.Email := 'webmaster@' + GetEnvironmentVariable('SERVER_NAME');
   Application.DefaultModuleName := string( Config.GetValue(_SYSTEM_MODULE_DEFAULT, 'main'));
   Application.ModuleVariable := string( Config.GetValue(_SYSTEM_MODULE_VARIABLE, 'mod'));
   Application.AllowDefaultModule := True;
@@ -18,9 +20,12 @@ begin
 
   Application.OnGetModule := @FastPlasAppandler.OnGetModule;
   Application.PreferModuleName := True;
-  {$if FPC_FULlVERSION >= 30004}
+  {$if FPC_FULLVERSION >= 30004}
   Application.LegacyRouting := True;
   {$endif}
+
+  // startup banner, standalone (HTTP) mode only
+  ShowStandaloneBanner;
 
   Application.Initialize;
   Application.Run;

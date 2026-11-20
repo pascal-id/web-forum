@@ -5,7 +5,7 @@ unit stats_controller;
 interface
 
 uses
-  Classes, SysUtils, fpcgi, fpjson, json_lib, HTTPDefs, fastplaz_handler, 
+  Classes, SysUtils, fastplaz_app, fpjson, json_lib, HTTPDefs, fastplaz_handler, 
     database_lib, string_helpers, dateutils, datetime_helpers;
 
 type

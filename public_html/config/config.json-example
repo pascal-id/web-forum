@@ -26,6 +26,7 @@
       "password": "the_password",
       "database_name": "database_name",
       "prefix": "",
+      "version_check": false,
       "library": ""
     }
   },

@@ -1,3 +1,9 @@
+/* default font size: 87.5% = 14px at the browser default (16px),
+   still follows the user's browser font setting.
+   AdminLTE uses rem, so everything scales from here. */
+html {
+  font-size: 87.5%;
+}
 body {
   font-family: "Ubuntu", "MuseoSans","Source Sans Pro";
   font-size: unset;

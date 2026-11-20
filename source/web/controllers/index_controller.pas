@@ -5,7 +5,7 @@ unit index_controller;
 interface
 
 uses
-  Classes, SysUtils, html_lib, fpcgi, fpjson, json_lib, HTTPDefs,
+  Classes, SysUtils, html_lib, fastplaz_app, fpjson, json_lib, HTTPDefs,
   fastplaz_handler, database_lib, string_helpers, dateutils, datetime_helpers;
 
 {$include ../../common/common.inc}
@@ -52,7 +52,6 @@ begin
 
   Lang := GetLang;
   DataBaseInit();
-  QueryExec('SET CHARACTER SET utf8;');
   QueryExec('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,''ONLY_FULL_GROUP_BY'',''''))');
 
   ThemeUtil.AddCSS(BaseURL + 'modules/home/css/style.css');
