@@ -191,13 +191,14 @@ var
   i, level: integer;
   line, s, fence, lang, code, paragraph, quote, listTag: string;
 
+  // plain text lines end with <br />, no <p>
   procedure FlushParagraph;
   begin
     if paragraph = '' then
       Exit;
     s := MarkdownInline(paragraph);
     s := StringReplace(s, #10, '<br />'#10, [rfReplaceAll]);
-    Result := Result + '<p>' + s + '</p>'#10;
+    Result := Result + s + '<br />'#10;
     paragraph := '';
   end;
 
@@ -282,8 +283,13 @@ begin
 
       if Trim(line) = '' then
       begin
+        // blank line after text: one extra <br /> as paragraph spacing
+        if paragraph <> '' then
+        begin
+          FlushParagraph;
+          Result := Result + '<br />'#10;
+        end;
         // keep the list open: items may be separated by blank lines
-        FlushParagraph;
         FlushQuote;
       end
       else if reHeading.Exec(Trim(line)) then
@@ -339,7 +345,11 @@ begin
   // legacy HTML article, unless it also contains markdown syntax
   if IsHTMLContent(Result) and not HasMarkdownSyntax(Result) then
     Exit;
-  // markdown mixed with <br>: treat <br> as line break
+  // markdown mixed with <br>: treat <br> as line break,
+  // a <br> next to a newline is the same line break
+  Result := StringReplace(Result, #13#10, #10, [rfReplaceAll]);
+  Result := ReplaceRegExpr('(?i)\n[ \t]*<br\s*/?>', Result, #10, False);
+  Result := ReplaceRegExpr('(?i)<br\s*/?>[ \t]*\n', Result, #10, False);
   Result := ReplaceRegExpr('(?i)<br\s*/?>', Result, #10, False);
   Result := MarkdownContentToHTML(Result);
 end;
