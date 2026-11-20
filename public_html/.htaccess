@@ -38,6 +38,12 @@ RewriteRule ^(.*)/$ $1.bin [QSA,L]
   Allow from env=goodbot
 </Files>
 
+# robots.txt must be readable by every crawler
+<Files "robots.txt">
+  Order allow,deny
+  Allow from all
+</Files>
+
 RewriteCond %{REQUEST_FILENAME} -d [OR]
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -l

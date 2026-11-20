@@ -12,9 +12,10 @@ implementation
 uses info_controller, index_controller, thread_controller, forum_home_controller,
   topic_list_controller, category_controller, article_controller, article_new_controller,
   article_detail_controller, user_controller, profile_controller,
-  obsolete_controller, topic_new_controller;
+  obsolete_controller, topic_new_controller, sitemap_controller;
 
 initialization
+  Route[ '^/sitemap\.xml$'] := TSitemapController;
   //Route[ '/info'] := TInfoModule;
   //Route.Add('thread', '/thread/(.*)/([0-9]+)/(.*)', TThreadController);
   Route[ '/thread/(.*)/([0-9]+)/(.*)'] := TThreadController;
